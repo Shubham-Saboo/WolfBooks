@@ -1,0 +1,11 @@
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ Idea
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+
