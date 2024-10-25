@@ -1,4 +1,4 @@
-package src;
+package src.main.java.WolfBooks;
 
 public class App {
 
