@@ -11,14 +11,14 @@ DROP TABLE IF EXISTS Courses;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Textbooks;
 
-CREATE TABLE IF NOT EXISTS wolfbooks.Textbooks (
+CREATE TABLE IF NOT EXISTS Textbooks (
     textbook_id VARCHAR(255),
     textbook_title VARCHAR(255) NOT NULL,
     is_customized BOOLEAN NOT NULL DEFAULT FALSE,
 	PRIMARY KEY (textbook_id)
 );
 
-CREATE TABLE IF NOT EXISTS wolfbooks.Users (
+CREATE TABLE IF NOT EXISTS Users (
     user_id VARCHAR(255) PRIMARY KEY,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS wolfbooks.Users (
     first_login BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Courses (
+CREATE TABLE IF NOT EXISTS Courses (
    course_id VARCHAR(255) PRIMARY KEY,
    course_title VARCHAR(255) NOT NULL,
    faculty_id VARCHAR(255),
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS csc540.Courses (
    FOREIGN KEY (faculty_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Notifications (
+CREATE TABLE IF NOT EXISTS Notifications (
     notification_id VARCHAR(255) PRIMARY KEY,
     content TEXT NOT NULL,
     user_id VARCHAR(255) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS csc540.Notifications (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Enrollment (
+CREATE TABLE IF NOT EXISTS Enrollment (
 	user_id VARCHAR(256),
 	course_id VARCHAR(256),
 	user_status VARCHAR(255) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS csc540.Enrollment (
 	FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Chapter (
+CREATE TABLE IF NOT EXISTS Chapter (
     chapter_id VARCHAR(255),
     chapter_title VARCHAR(255) NOT NULL,
     textbook_id VARCHAR(255),
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS csc540.Chapter (
     FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Section (
+CREATE TABLE IF NOT EXISTS Section (
     section_id VARCHAR(255),
     section_title VARCHAR(255) NOT NULL,
     chapter_id VARCHAR(255),
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS csc540.Section (
     FOREIGN KEY (chapter_id) REFERENCES Chapter(chapter_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Content (
+CREATE TABLE IF NOT EXISTS Content (
     content_id VARCHAR(255),
     text_content TEXT,
     Image TEXT,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS csc540.Content (
     FOREIGN KEY (section_id) REFERENCES Section (section_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Activity (
+CREATE TABLE IF NOT EXISTS Activity (
     activity_id VARCHAR(255),
     total_score INT CHECK (total_score >= 0),
     a_timestamp DATETIME NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS csc540.Activity (
     UNIQUE (activity_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.StudentActivity (
+CREATE TABLE IF NOT EXISTS StudentActivity (
     activity_id VARCHAR(255),
     student_id VARCHAR(255),
     score INT CHECK (score >= 0) DEFAULT 0,
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS csc540.StudentActivity (
     FOREIGN KEY (student_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.Questions (
+CREATE TABLE IF NOT EXISTS Questions (
 	question_id VARCHAR(256),
 	activity_id VARCHAR(256),
 	question VARCHAR(256) NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS csc540.Questions (
 	FOREIGN KEY (activity_id) REFERENCES Activity(activity_id)
 );
 
-CREATE TABLE IF NOT EXISTS csc540.TeachingAssistants (
+CREATE TABLE IF NOT EXISTS TeachingAssistants (
 	user_id VARCHAR(256),
 	course_id VARCHAR(256),
 	user_role VARCHAR(256) NOT NULL,
