@@ -1,5 +1,6 @@
 package src.main.java.WolfBooks;
 import java.sql.*;
+import java.util.*;
 
 public class App {
     public static void main(String[] args) {
@@ -7,8 +8,8 @@ public class App {
         Scanner sc = new Scanner(System.in);
         try {
             String dbUrl = "jdbc:mysql://localhost:3306/wolfbooks";
-            String dbUser = "root";
-            String dbPass = "";
+            String dbUser = sc.nextLine(); // Most likely 'root'
+            String dbPass = sc.nextLine(); // Most likely ''
             conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
 
 
