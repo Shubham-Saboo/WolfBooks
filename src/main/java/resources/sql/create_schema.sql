@@ -134,9 +134,7 @@ CREATE TABLE IF NOT EXISTS Questions (
 CREATE TABLE IF NOT EXISTS TeachingAssistants (
 	user_id VARCHAR(256),
 	course_id VARCHAR(256),
-	user_role VARCHAR(256) NOT NULL,
 	PRIMARY KEY (user_id, course_id),
 	FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (course_id) REFERENCES Courses(course_id),
-	FOREIGN KEY (user_role) REFERENCES Users(user_role)
+	FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
