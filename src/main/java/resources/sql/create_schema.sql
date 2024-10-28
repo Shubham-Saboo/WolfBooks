@@ -2,143 +2,207 @@ DROP SCHEMA IF EXISTS WolfBooks;
 CREATE SCHEMA WolfBooks;
 USE WolfBooks;
 
+-- Drop tables in reverse order of dependencies
+DROP TABLE IF EXISTS StudentGrades;
 DROP TABLE IF EXISTS TeachingAssistants;
 DROP TABLE IF EXISTS Questions;
-DROP TABLE IF EXISTS StudentActivity;
-DROP TABLE IF EXISTS Activity;
-DROP TABLE IF EXISTS Content;
-DROP TABLE IF EXISTS Section;
-DROP TABLE IF EXISTS Chapter;
-DROP TABLE IF EXISTS Enrollment;
+DROP TABLE IF EXISTS StudentActivities;
+DROP TABLE IF EXISTS Activities;
+DROP TABLE IF EXISTS Blocks;
+DROP TABLE IF EXISTS Sections;
+DROP TABLE IF EXISTS Chapters;
+DROP TABLE IF EXISTS Enrollments;
 DROP TABLE IF EXISTS Notifications;
 DROP TABLE IF EXISTS Courses;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Textbooks;
 
 CREATE TABLE IF NOT EXISTS Textbooks (
-    textbook_id VARCHAR(255),
+    textbook_id VARCHAR(50),
     textbook_title VARCHAR(255) NOT NULL,
-    is_customized BOOLEAN NOT NULL DEFAULT FALSE,
-	PRIMARY KEY (textbook_id)
+    PRIMARY KEY (textbook_id)
 );
 
 CREATE TABLE IF NOT EXISTS Users (
-    user_id VARCHAR(255) PRIMARY KEY,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
+    user_id VARCHAR(50) PRIMARY KEY,
+    firstname VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    pw VARCHAR(255) NOT NULL,
-    user_role VARCHAR(50) NOT NULL CHECK (user_role IN ('student', 'faculty', 'teaching_assistant', 'admin')),
-    first_login BOOLEAN DEFAULT FALSE
+    password VARCHAR(255) NOT NULL,
+    user_role VARCHAR(20) NOT NULL CHECK (user_role IN ('student', 'faculty', 'teaching_assistant', 'admin')),
+    first_login BOOLEAN DEFAULT FALSE,
+    INDEX (email)
 );
 
 CREATE TABLE IF NOT EXISTS Courses (
-   course_id VARCHAR(255) PRIMARY KEY,
+   course_id VARCHAR(50) PRIMARY KEY,
    course_title VARCHAR(255) NOT NULL,
-   faculty_id VARCHAR(255),
+   faculty_id VARCHAR(50),
    start_date DATE,
    end_date DATE,
-   course_type VARCHAR(50) NOT NULL,
+   course_type VARCHAR(20) NOT NULL CHECK (course_type IN ('Active', 'Evaluation')),
    capacity INT DEFAULT 0,
    token VARCHAR(7),
-   textbook_id VARCHAR(255),
+   textbook_id VARCHAR(50),
+   INDEX (faculty_id),
+   INDEX (textbook_id),
    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id),
    FOREIGN KEY (faculty_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS Notifications (
-    notification_id VARCHAR(255) PRIMARY KEY,
+    notification_id VARCHAR(50),
     content TEXT NOT NULL,
-    user_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (user_id, notification_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS Enrollment (
-	user_id VARCHAR(256),
-	course_id VARCHAR(256),
-	user_status VARCHAR(255) NOT NULL,
-	PRIMARY KEY (user_id, course_id),
-	FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+CREATE TABLE IF NOT EXISTS Enrollments (
+    user_id VARCHAR(50),
+    course_id VARCHAR(50),
+    user_status VARCHAR(50) NOT NULL,
+    PRIMARY KEY (user_id, course_id),
+    INDEX (course_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
 
-CREATE TABLE IF NOT EXISTS Chapter (
-    chapter_id VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Chapters (
+    chapter_id VARCHAR(50),
     chapter_title VARCHAR(255) NOT NULL,
-    textbook_id VARCHAR(255),
+    textbook_id VARCHAR(50),
     is_hidden BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by VARCHAR(255) NOT NULL,
-    PRIMARY KEY(chapter_id),
+    created_by VARCHAR(50) NOT NULL,
+    PRIMARY KEY(textbook_id, chapter_id),
+    INDEX (chapter_id),
     FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id)
 );
 
-CREATE TABLE IF NOT EXISTS Section (
-    section_id VARCHAR(255),
+CREATE TABLE IF NOT EXISTS Sections (
+    section_id VARCHAR(50),
+    textbook_id VARCHAR(50),
     section_title VARCHAR(255) NOT NULL,
-    chapter_id VARCHAR(255),
+    chapter_id VARCHAR(50),
     section_number INT,
     is_hidden BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by VARCHAR(255) NOT NULL,
-    PRIMARY KEY (section_id),
-    FOREIGN KEY (chapter_id) REFERENCES Chapter(chapter_id)
+    created_by VARCHAR(50) NOT NULL,
+    PRIMARY KEY (textbook_id, section_id, chapter_id),
+    INDEX (section_id),
+    INDEX (chapter_id),
+    FOREIGN KEY (chapter_id) REFERENCES Chapters(chapter_id),
+    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id)
 );
 
-CREATE TABLE IF NOT EXISTS Content (
-    content_id VARCHAR(255),
-    text_content TEXT,
-    Image TEXT,
-    section_id VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS Blocks (
+    section_id VARCHAR(50),
+    textbook_id VARCHAR(50),
+    block_id VARCHAR(50),
+    chapter_id VARCHAR(50),
+    content_type VARCHAR(50),
+    content VARCHAR(255),
     is_hidden BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by VARCHAR(255) NOT NULL,
-    sequence_number  INT NOT NULL,
-    PRIMARY KEY(content_id),
-    FOREIGN KEY (section_id) REFERENCES Section (section_id)
+    created_by VARCHAR(50) NOT NULL,
+    sequence_number INT NOT NULL,
+    PRIMARY KEY(block_id, section_id, textbook_id, chapter_id),
+    INDEX (section_id),
+    INDEX (chapter_id),
+    INDEX (block_id),
+    FOREIGN KEY (section_id, textbook_id, chapter_id) REFERENCES Sections(section_id, textbook_id, chapter_id),
+    FOREIGN KEY (chapter_id) REFERENCES Chapters(chapter_id),
+    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id)
 );
 
-CREATE TABLE IF NOT EXISTS Activity (
-    activity_id VARCHAR(255),
-    total_score INT CHECK (total_score >= 0),
-    a_timestamp DATETIME NOT NULL,
-    content_id VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS Activities (
+    activity_id VARCHAR(50),
+    section_id VARCHAR(50),
+    textbook_id VARCHAR(50),
+    chapter_id VARCHAR(50),
+    block_id VARCHAR(50),
     is_hidden BOOLEAN NOT NULL DEFAULT FALSE,
-    created_by VARCHAR(255) NOT NULL,
-    PRIMARY KEY(activity_id),
-    FOREIGN KEY (content_id) REFERENCES Content(content_id),
+    created_by VARCHAR(50) NOT NULL,
+    PRIMARY KEY(activity_id, block_id, section_id, textbook_id, chapter_id),
+    INDEX (activity_id),
+    INDEX (block_id),
+    INDEX (section_id),
+    FOREIGN KEY (block_id, section_id, textbook_id, chapter_id)
+        REFERENCES Blocks(block_id, section_id, textbook_id, chapter_id),
+    FOREIGN KEY (section_id) REFERENCES Sections(section_id),
+    FOREIGN KEY (chapter_id) REFERENCES Chapters(chapter_id),
+    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id),
     UNIQUE (activity_id)
 );
 
-CREATE TABLE IF NOT EXISTS StudentActivity (
-    activity_id VARCHAR(255),
-    student_id VARCHAR(255),
-    score INT CHECK (score >= 0) DEFAULT 0,
-    sa_timestamp DATETIME NOT NULL,
-    PRIMARY KEY (activity_id, student_id),
-    FOREIGN KEY (activity_id) REFERENCES Activity(activity_id),
-    FOREIGN KEY (student_id) REFERENCES Users(user_id)
+CREATE TABLE IF NOT EXISTS Questions (
+    textbook_id VARCHAR(50),
+    chapter_id VARCHAR(50),
+    section_id VARCHAR(50),
+    block_id VARCHAR(50),
+    activity_id VARCHAR(50),
+    question_id VARCHAR(50),
+    question VARCHAR(255) NOT NULL,
+    explanation_one VARCHAR(255) NOT NULL,
+    explanation_two VARCHAR(255) NOT NULL,
+    explanation_three VARCHAR(255) NOT NULL,
+    explanation_four VARCHAR(255) NOT NULL,
+    answer_one VARCHAR(255) NOT NULL,
+    answer_two VARCHAR(255) NOT NULL,
+    answer_three VARCHAR(255) NOT NULL,
+    answer_four VARCHAR(255) NOT NULL,
+    answer_correct CHAR NOT NULL,
+    PRIMARY KEY (textbook_id, chapter_id, section_id, block_id, activity_id, question_id),
+    INDEX (question_id),
+    INDEX (activity_id),
+    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id),
+    FOREIGN KEY (chapter_id) REFERENCES Chapters(chapter_id),
+    FOREIGN KEY (section_id) REFERENCES Sections(section_id),
+    FOREIGN KEY (block_id) REFERENCES Blocks(block_id),
+    FOREIGN KEY (activity_id) REFERENCES Activities(activity_id)
 );
 
-CREATE TABLE IF NOT EXISTS Questions (
-	question_id VARCHAR(256),
-	activity_id VARCHAR(256),
-	question VARCHAR(256) NOT NULL,
-	explanation_one VARCHAR(256) NOT NULL,
-	explanation_two VARCHAR(256) NOT NULL,
-	explanation_three VARCHAR(256) NOT NULL,
-	explanation_four VARCHAR(256) NOT NULL,
-	answer_one VARCHAR(256) NOT NULL,
-	answer_two VARCHAR(256) NOT NULL,
-	answer_three VARCHAR(256) NOT NULL,
-	answer_four VARCHAR(256) NOT NULL,
-	answer_correct CHAR NOT NULL,
-	PRIMARY KEY (question_id),
-	FOREIGN KEY (activity_id) REFERENCES Activity(activity_id)
+CREATE TABLE IF NOT EXISTS StudentActivities (
+    student_id VARCHAR(50),
+    course_id VARCHAR(50),
+    textbook_id VARCHAR(50),
+    chapter_id VARCHAR(50),
+    section_id VARCHAR(50),
+    block_id VARCHAR(50),
+    question_id VARCHAR(50),
+    unique_activity_id VARCHAR(50),
+    score INT CHECK (score >= 0) DEFAULT 0,
+    sa_timestamp DATETIME NOT NULL,
+    PRIMARY KEY (student_id, course_id, textbook_id, chapter_id, section_id, block_id, question_id, unique_activity_id),
+    INDEX (student_id),
+    INDEX (course_id),
+    INDEX (question_id),
+    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id),
+    FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id),
+    FOREIGN KEY (chapter_id) REFERENCES Chapters(chapter_id),
+    FOREIGN KEY (section_id) REFERENCES Sections(section_id),
+    FOREIGN KEY (block_id) REFERENCES Blocks(block_id),
+    FOREIGN KEY (question_id) REFERENCES Questions(question_id)
 );
 
 CREATE TABLE IF NOT EXISTS TeachingAssistants (
-	user_id VARCHAR(256),
-	course_id VARCHAR(256),
-	PRIMARY KEY (user_id, course_id),
-	FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+    user_id VARCHAR(50),
+    course_id VARCHAR(50),
+    faculty_id VARCHAR(50),
+    PRIMARY KEY (user_id, course_id, faculty_id),
+    INDEX (faculty_id),
+    INDEX (course_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id),
+    FOREIGN KEY (faculty_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS StudentGrades (
+    student_id VARCHAR(50) NOT NULL,
+    course_id VARCHAR(50) NOT NULL,
+    total_points INT DEFAULT 0,
+    total_activities INT DEFAULT 0,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES Users(user_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
