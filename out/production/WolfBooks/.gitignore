@@ -19,3 +19,6 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+
+# Other
+out/
