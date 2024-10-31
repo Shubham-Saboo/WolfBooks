@@ -33,9 +33,7 @@ public class WolfbooksService {
                 run = login(sc);
             }
             else {
-                user.getOptions();
-                int option = sc.nextInt();
-                user.useOption(option);
+                // Get user options. This can be done via the service for the user.
             }
         }
         user = null;
