@@ -1,8 +1,7 @@
 package src.main.java.WolfBooks.services;
 
-import src.main.java.WolfBooks.models.User;
+import src.main.java.WolfBooks.models.UserModel;
 
-import java.awt.print.Book;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +9,7 @@ import java.util.Scanner;
 
 public class WolfbooksService {
 
-    User user;
+    UserModel user;
 
     Connection conn;
 
@@ -23,10 +22,9 @@ public class WolfbooksService {
         roles.put(2, "faculty");
         roles.put(3, "ta");
         roles.put(4, "student");
-        runService();
     }
 
-    private void runService() {
+    public void runService() {
         boolean run = true;
         Scanner sc = new Scanner(System.in);
         System.out.println("Welcome to WolfBooks Service");

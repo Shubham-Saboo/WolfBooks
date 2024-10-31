@@ -1,16 +1,16 @@
 package src.main.java.WolfBooks.models;
 
-public abstract class User {
+public abstract class UserModel {
 
     String username;
     String role;
     String[] options;
 
-    public User (String username) {
+    public UserModel(String username) {
         setUsername(username);
     }
 
-    public User (String username, String role) {
+    public UserModel(String username, String role) {
         this(username);
         setRole(role);
     }

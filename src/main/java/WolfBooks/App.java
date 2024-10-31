@@ -1,7 +1,7 @@
 package src.main.java.WolfBooks;
 import java.sql.*;
 import java.util.*;
-import src.main.java.WolfBooks.helpers.*;
+import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
 
 public class App {
@@ -25,6 +25,7 @@ public class App {
 
             System.out.println("Connected to database");
             WolfbooksService service = new WolfbooksService(conn);
+            service.runService();
 
             conn.close();
         } catch (SQLException e) {
