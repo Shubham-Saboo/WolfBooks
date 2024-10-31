@@ -2,13 +2,13 @@ package src.main.java.WolfBooks.models;
 
 public class ChapterModel {
 
-    private int chapterId;
+    private String chapterId;
     private String chapterTitle;
     private int textbookId;
     private boolean isHidden;
     private String createdBy;
 
-    public ChapterModel(int chapterId, String chapterTitle, int textbookId, boolean isHidden, String createdBy) {
+    public ChapterModel(String chapterId, String chapterTitle, int textbookId, boolean isHidden, String createdBy) {
         setChapterId(chapterId);
         setChapterTitle(chapterTitle);
         setTextbookId(textbookId);
@@ -16,11 +16,11 @@ public class ChapterModel {
         setCreatedBy(createdBy);
     }
 
-    public int getChapterId() {
+    public String getChapterId() {
         return chapterId;
     }
 
-    public void setChapterId(int chapterId) {
+    public void setChapterId(String chapterId) {
         this.chapterId = chapterId;
     }
 
