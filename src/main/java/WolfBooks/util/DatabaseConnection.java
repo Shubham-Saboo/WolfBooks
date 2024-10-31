@@ -14,6 +14,7 @@ public class DatabaseConnection {
             String dbSchema = "WolfBooks";
             String dbUser = "root"; // Most likely 'root'
             String dbPass = ""; // Most likely ''
+
             try {
                 connection = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {

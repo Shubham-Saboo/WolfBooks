@@ -1,8 +1,12 @@
 package src.main.java.WolfBooks;
+
 import java.sql.*;
 import java.util.*;
 import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
+import src.main.java.WolfBooks.controller.LandingPageController;
+import src.main.java.WolfBooks.dao.UserDAO;
+import src.main.java.WolfBooks.services.AdminService;
 
 public class App {
     public static void main(String[] args) {
@@ -12,7 +16,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = ""; //sc.nextLine(); // Most likely ''
+            String dbPass = "@Qwerty12345"; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -25,10 +29,24 @@ public class App {
             }
 
             System.out.println("Connected to database");
-            WolfbooksService service = new WolfbooksService(conn);
-            service.runService();
+            // Initialize DAOs with connection
+            UserDAO userDAO = new UserDAO();
+            // TODO: Initialize other DAOs when implemented
 
+            // Initialize Services
+            AdminService adminService = new AdminService(userDAO);
+            WolfbooksService wolfbooksService = new WolfbooksService(conn);
+
+            // Initialize Controllers
+            LandingPageController landingPage = new LandingPageController(adminService);
+
+            // Start the application
+            System.out.println("Starting WolfBooks Application...");
+            landingPage.start();
             conn.close();
+
+
+
         } catch (SQLException e) {
             System.out.println("SQL Error: " + e.getMessage());
         } catch (Exception e) {

@@ -74,6 +74,7 @@ public class BlockDAO {
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
 
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
