@@ -19,6 +19,7 @@ public class App {
                 conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
                 InitializeDatabase init = new InitializeDatabase();
                 init.createSchema(conn);
+                init.insertDemoData(conn);
                 conn.close();
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             }
