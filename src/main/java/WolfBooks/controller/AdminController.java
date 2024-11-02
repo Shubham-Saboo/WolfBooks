@@ -111,7 +111,7 @@ public class AdminController {
             String choice = scanner.nextLine();
 
             if (choice.equals("1")) {
-                if (adminService.createETextbook(title, textbookId)) {
+                if (adminService.createTextbook(title, textbookId)) {
                     handleAddNewChapter(textbookId);
                 }
             }
@@ -135,9 +135,12 @@ public class AdminController {
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
 
+            boolean isHidden = false;
+            String createdBy = "admin";
+
             switch (choice) {
                 case "1":
-                    if (adminService.addChapter(textbookId, chapterId, chapterTitle)) {
+                    if (adminService.createChapter(textbookId, chapterId, chapterTitle, isHidden, createdBy)) {
                         handleAddNewSection(textbookId, chapterId);
                     }
                     break;
