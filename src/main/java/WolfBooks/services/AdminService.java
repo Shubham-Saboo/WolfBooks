@@ -79,7 +79,7 @@ public class AdminService {
             return false;
         }
 
-        ChapterModel chapter = new ChapterModel(chapterId, textbookId, chapterTitle, isHidden, createdBy);
+        ChapterModel chapter = new ChapterModel(chapterId, chapterTitle, textbookId, isHidden, createdBy);
         return chapterDAO.createChapter(chapter);
     }
 

@@ -142,6 +142,7 @@ public class AdminController {
             switch (choice) {
                 case "1":
                     if (adminService.createChapter(textbookId, chapterId, chapterTitle, isHidden, createdBy)) {
+                        System.out.println("Chapter created successfully!");
                         handleAddNewSection(textbookId, chapterId);
                     }
                     break;
@@ -154,6 +155,57 @@ public class AdminController {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
+    }
+
+    private void handleAddNewSection(String textbookId, String chapterId) {
+        System.out.println("\n=== Add New Section ===");
+        try {
+            // Step 1: Get Section details from admin input
+            System.out.print("Enter Section ID: ");
+            String sectionId = scanner.nextLine();
+
+            System.out.print("Enter Section Title: ");
+            String sectionTitle = scanner.nextLine();
+
+            // Step 2: Display menu options for adding blocks or going back
+            System.out.println("\n1. Add New Block");
+            System.out.println("2. Go Back");
+            System.out.println("3. Landing Page");
+            System.out.print("Enter your choice (1-3): ");
+            String choice = scanner.nextLine();
+
+            boolean isHidden = false;
+            String createdBy = "admin";
+
+            switch (choice) {
+                case "1":
+                    // Option 1: Add a new block after creating a section
+                    if (adminService.createSection(textbookId, chapterId, sectionId, sectionTitle, isHidden, createdBy)) {
+                        System.out.println("Section created successfully!");
+                        handleAddNewBlock(textbookId, chapterId, sectionId); // Redirect to add new block
+                    } else {
+                        System.out.println("Failed to create section.");
+                    }
+                    break;
+                case "2":
+                    // Option 2: Go back without adding a block
+                    return;
+                case "3":
+                    // Option 3: Return to Admin Landing Page
+                    showAdminMenu();
+                    break;
+                default:
+                    // Handle invalid input
+                    System.out.println("Invalid choice. Returning to Admin Landing Page.");
+                    showAdminMenu();
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleAddNewBlock(String textbookId, String chapterId, String sectionId) {
     }
 
     private void handleModifyETextbooks() {
@@ -286,11 +338,7 @@ public class AdminController {
             System.out.println("Error: " + e.getMessage());
         }
     }
-
-    // Additional helper methods for content management would go here
-    private void handleAddNewSection(String textbookId, String chapterId) {
-        // Implementation for adding new section
-    }
+    
 
     private void handleModifyChapter(String textbookId) {
         // Implementation for modifying chapter
