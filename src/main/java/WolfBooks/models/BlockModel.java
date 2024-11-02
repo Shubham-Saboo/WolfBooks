@@ -3,7 +3,7 @@ package src.main.java.WolfBooks.models;
 public class BlockModel {
 
     private String sectionId;
-    private int textbookId;
+    private String textbookId;
     private String blockId;
     private String chapterId;
     private String contentType;
@@ -12,7 +12,7 @@ public class BlockModel {
     private String createdBy;
     private int sequenceNumber;
 
-    public BlockModel(String sectionId, int textbookId, String blockId, String chapterId, String contentType, String content, boolean isHidden, String createdBy, int sequenceNumber) {
+    public BlockModel(String sectionId, String textbookId, String blockId, String chapterId, String contentType, String content, boolean isHidden, String createdBy, int sequenceNumber) {
         setSectionId(sectionId);
         setTextbookId(textbookId);
         setBlockId(blockId);
@@ -32,11 +32,11 @@ public class BlockModel {
         this.sectionId = sectionId;
     }
 
-    public int getTextbookId() {
+    public String getTextbookId() {
         return textbookId;
     }
 
-    public void setTextbookId(int textbookId) {
+    public void setTextbookId(String textbookId) {
         this.textbookId = textbookId;
     }
 
