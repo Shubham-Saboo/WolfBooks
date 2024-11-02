@@ -3,11 +3,11 @@ package src.main.java.WolfBooks.models;
 public class TextbookModel {
 
     private String textbookID;
-    private String textbookName;
+    private String textbookTitle;
 
-    public TextbookModel(String textbookID, String textbookName) {
+    public TextbookModel(String textbookID, String textbookTitle) {
         setTextbookID(textbookID);
-        setTextbookName(textbookName);
+        setTextbookTitle(textbookTitle);
     }
 
     public String getTextbookID() {
@@ -15,18 +15,14 @@ public class TextbookModel {
     }
 
     public String getTextbookTitle() {
-        return textbookName;
+        return textbookTitle;
     }
 
     public void setTextbookID(String textbookID) {
         this.textbookID = textbookID;
     }
 
-    public String getTextbookName() {
-        return textbookName;
-    }
-
-    public void setTextbookName(String textbookName) {
-        this.textbookName = textbookName;
+    public void setTextbookTitle(String textbookTitle) {
+        this.textbookTitle = textbookTitle;
     }
 }

@@ -21,6 +21,7 @@ public class TextbookDAO {
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
+            System.out.println("Error inserting textbook: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

@@ -112,6 +112,7 @@ public class AdminController {
 
             if (choice.equals("1")) {
                 if (adminService.createTextbook(title, textbookId)) {
+                    System.out.println("E-textbook created successfully!");
                     handleAddNewChapter(textbookId);
                 }
             }
