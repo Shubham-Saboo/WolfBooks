@@ -11,13 +11,13 @@ public class BlockDAO {
 
     // Create a new block
     public boolean createBlock(BlockModel block) {
-        String sql = "INSERT INTO Blocks (block_id, section_id, textbook_id, chapter_id, content_type, content, is_hidden, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Blocks (section_id, textbook_id, block_id, chapter_id, content_type, content, is_hidden, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, block.getBlockId());
-            pstmt.setString(2, block.getSectionId());
-            pstmt.setString(3, block.getTextbookId());
+            pstmt.setString(1, block.getSectionId());
+            pstmt.setString(2, block.getTextbookId());
+            pstmt.setString(3, block.getBlockId());
             pstmt.setString(4, block.getChapterId());
             pstmt.setString(5, block.getContentType());
             pstmt.setString(6, block.getContent());

@@ -2,20 +2,21 @@ package src.main.java.WolfBooks.models;
 
 public class BlockModel {
 
-    private String sectionId;
     private String textbookId;
-    private String blockId;
     private String chapterId;
+    private String sectionId;
+    private String blockId;
     private String contentType;
     private String content;
     private boolean isHidden;
     private String createdBy;
 
-    public BlockModel(String sectionId, String textbookId, String blockId, String chapterId, String contentType, String content, boolean isHidden, String createdBy) {
-        setSectionId(sectionId);
+    public BlockModel( String textbookId, String chapterId, String sectionId, String blockId, String contentType, String content, boolean isHidden, String createdBy) {
+
         setTextbookId(textbookId);
-        setBlockId(blockId);
         setChapterId(chapterId);
+        setSectionId(sectionId);
+        setBlockId(blockId);
         setContentType(contentType);
         setContent(content);
         setHidden(isHidden);

@@ -1,15 +1,8 @@
 package src.main.java.WolfBooks.services;
 
-import src.main.java.WolfBooks.dao.UserDAO;
-import src.main.java.WolfBooks.models.UserModel;
-import src.main.java.WolfBooks.dao.TextbookDAO;
-import src.main.java.WolfBooks.models.TextbookModel;
-import src.main.java.WolfBooks.dao.ChapterDAO;
-import src.main.java.WolfBooks.models.ChapterModel;
-import src.main.java.WolfBooks.dao.SectionDAO;
-import src.main.java.WolfBooks.models.SectionModel;
-import src.main.java.WolfBooks.dao.BlockDAO;
-import src.main.java.WolfBooks.models.BlockModel;
+import src.main.java.WolfBooks.dao.*;
+import src.main.java.WolfBooks.models.*;
+
 
 import java.sql.SQLException;
 import java.util.*;
@@ -22,6 +15,8 @@ public class AdminService {
     private final SectionDAO sectionDAO = new SectionDAO();
     private final ChapterDAO chapterDAO = new ChapterDAO();
     private final BlockDAO blockDAO = new BlockDAO();
+    private final ActivityDAO activityDAO = new ActivityDAO();
+    private final QuestionDAO questionDAO = new QuestionDAO();
 
     public AdminService(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -99,12 +94,44 @@ public class AdminService {
                                String content,
                                boolean isHidden,
                                String createdBy) {
-
-        BlockModel block=   new BlockModel(blockId ,sectionId ,textbookId ,chapterId ,contentType ,content ,isHidden ,createdBy);
+        if (!validateBlockInput(blockId,contentType)) {
+            return false;
+        }
+        BlockModel block=   new BlockModel(textbookId ,chapterId , sectionId , blockId , contentType ,content ,isHidden ,createdBy);
 
         return blockDAO.createBlock(block);
 
     }
+
+    public boolean createActivity(String textbookId, String chapterId, String sectionId, String blockId,
+                                  String activityId, boolean isHidden, String createdBy) {
+        // Validate input
+        if (!validateActivityInput(activityId)) {
+            return false;
+        }
+
+        // Create a new ActivityModel object without activityDescription
+        ActivityModel activity = new ActivityModel(activityId, blockId, sectionId, chapterId, textbookId, isHidden, createdBy); // No activityDescription
+
+        // Call DAO to insert the activity into the database
+        return activityDAO.createActivity(activity);
+    }
+
+    public boolean addQuestion(String textbookId,String chapterId,String sectionId,String blockId,
+                               String activityId,String questionId,String questionText,
+                               String explanationOne,String explanationTwo,String explanationThree,
+                               String explanationFour, String optionOne,String optionTwo,String optionThree,String optionFour,
+                               String correctAnswer) {
+
+        QuestionModel question = new QuestionModel(textbookId, chapterId, sectionId, blockId, activityId,
+                questionId, questionText, explanationOne, explanationTwo, explanationThree, explanationFour,
+                optionOne, optionTwo, optionThree, optionFour, correctAnswer);
+        return questionDAO.createQuestion(question);
+    }
+
+
+
+
     // Validation Methods
     private boolean validateTextbookInput(String title, String textbookId) {
         if (title == null || title.isEmpty() || textbookId == null || textbookId.isEmpty()) {
@@ -153,12 +180,14 @@ public class AdminService {
         return true;
     }
 
-    public boolean addQuestion(String activityId, String questionId, String questionText,
-                               List<String> options, List<String> explanations, char correctAnswer) {
-        validateQuestionInput(questionId, questionText, options, explanations, correctAnswer);
-        // TODO: Implement when appropriate DAO is available
-        throw new UnsupportedOperationException("Not implemented yet");
+    private boolean validateActivityInput(String activityId) {
+        if (activityId == null || activityId.trim().isEmpty()) {
+            System.out.println("Activity ID cannot be empty.");
+            return false;
+        }
+        return true;
     }
+
 
     // Course Management
     public boolean createActiveCourse(String courseId, String courseName, String textbookId,
