@@ -2,10 +2,11 @@ package src.main.java.WolfBooks;
 
 import java.sql.*;
 import java.util.*;
+
+import src.main.java.WolfBooks.dao.*;
 import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
 import src.main.java.WolfBooks.controller.LandingPageController;
-import src.main.java.WolfBooks.dao.UserDAO;
 import src.main.java.WolfBooks.services.AdminService;
 
 public class App {
@@ -16,7 +17,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = "@Qwerty12345"; //sc.nextLine(); // Most likely ''
+            String dbPass = "root"; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -31,6 +32,11 @@ public class App {
             System.out.println("Connected to database");
             // Initialize DAOs with connection
             UserDAO userDAO = new UserDAO();
+            TextbookDAO textbookDAO = new TextbookDAO();
+            ChapterDAO chapterDAO = new ChapterDAO();
+            SectionDAO sectionDAO = new SectionDAO();
+            BlockDAO blockDAO = new BlockDAO();
+
             // TODO: Initialize other DAOs when implemented
 
             // Initialize Services
