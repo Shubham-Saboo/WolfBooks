@@ -28,7 +28,7 @@ public class TextbookDAO {
     }
 
     // Retrieve a textbook by ID
-    public TextbookModel getTextbookById(String textbookId) {
+    public static TextbookModel getTextbookById(String textbookId) {
         String sql = "SELECT * FROM Textbooks WHERE textbook_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -94,7 +94,7 @@ public class TextbookDAO {
     }
 
     // Utility method to extract TextbookModel from ResultSet
-    private TextbookModel extractTextbookFromResultSet(ResultSet rs) throws SQLException {
+    private static TextbookModel extractTextbookFromResultSet(ResultSet rs) throws SQLException {
         return new TextbookModel(
                 rs.getString("textbook_id"),
                 rs.getString("textbook_title")

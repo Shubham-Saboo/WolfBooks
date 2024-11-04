@@ -19,8 +19,8 @@ public class CourseDAO {
             pstmt.setString(1, course.getCourseId());
             pstmt.setString(2, course.getCourseTitle());
             pstmt.setString(3, course.getFacultyId());
-            pstmt.setDate(4, course.getStartDate());
-            pstmt.setDate(5, course.getEndDate());
+            pstmt.setDate(4, new java.sql.Date(course.getStartDate().getTime()));
+            pstmt.setDate(5, new java.sql.Date(course.getEndDate().getTime()));
             pstmt.setString(6, course.getCourseType());
             pstmt.setInt(7, course.getCapacity());
             pstmt.setString(8, course.getToken());
@@ -82,8 +82,8 @@ public class CourseDAO {
             // Set updated fields
             pstmt.setString(1, course.getCourseTitle());
             pstmt.setString(2, course.getFacultyId());
-            pstmt.setDate(3, course.getStartDate());
-            pstmt.setDate(4, course.getEndDate());
+            pstmt.setDate(3, new java.sql.Date(course.getStartDate().getTime()));
+            pstmt.setDate(4, new java.sql.Date(course.getEndDate().getTime()));
             pstmt.setString(5, course.getCourseType());
             pstmt.setInt(6, course.getCapacity());
             pstmt.setString(7, course.getToken());

@@ -88,7 +88,7 @@ public class BlockDAO {
      * @param blockId The block id of the block within the section.
      * @return The block if it exists, null otherwise.
      */
-    public BlockModel findBlock(String textbookId, String chapterId, String sectionId, String blockId) {
+    public static BlockModel findBlock(String textbookId, String chapterId, String sectionId, String blockId) {
         String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ?";
         try {
             Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -131,7 +131,7 @@ public class BlockDAO {
         }
     }
 
-    private BlockModel mapResultSetToBlock(ResultSet rs) throws SQLException {
+    private static BlockModel mapResultSetToBlock(ResultSet rs) throws SQLException {
         return new BlockModel(
             rs.getString("section_id"),
             rs.getString("textbook_id"),
