@@ -13,6 +13,11 @@ import java.util.List;
 
 public class BlockDAO {
 
+    /**
+     * Adds a block to the database
+     * @param block The model block to be added to the database.
+     * @return true if the block was added, false otherwise
+     */
     public boolean addBlock(BlockModel block) {
         String sqlQuery = "INSERT INTO blocks (section_id, textbook_id, block_id, chapter_id, content_type, content, is_hidden, created_by, sequence_number) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -55,6 +60,11 @@ public class BlockDAO {
         }
     }
 
+    /**
+     * Deletes a block from the database
+     * @param block The model of the block to be removed
+     * @return true if the block was deleted, false otherwise
+     */
     public boolean deleteBlock(BlockModel block) {
         String sqlQuery = "DELETE FROM blocks WHERE section_id = ? AND textbook_id = ? AND block_id = ? AND chapter_id = ?";
         try {
@@ -71,8 +81,14 @@ public class BlockDAO {
         }
     }
 
-    // Find block by section
-
+    /**
+     * Finds a specific block from the 'blocks' table.
+     * @param textbookId The textbook to look in.
+     * @param chapterId The chapter of the textbook to look in.
+     * @param sectionId The section of the textbook to look in.
+     * @param blockId The block id of the block within the section.
+     * @return The block if it exists, null otherwise.
+     */
     public BlockModel findBlock(String textbookId, String chapterId, String sectionId, String blockId) {
         String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ?";
         try {
@@ -91,6 +107,7 @@ public class BlockDAO {
         }
     }
 
+    // Find block by section
     public List<BlockModel> findBlocksBySection(String textbookId, String chapterId, String sectionId) {
                 String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
         try {
@@ -117,15 +134,15 @@ public class BlockDAO {
 
     private BlockModel mapResultSetToBlock(ResultSet rs) throws SQLException {
         return new BlockModel(
-                rs.getString("section_id"),
-                rs.getString("textbook_id"),
-                rs.getString("block_id"),
-                rs.getString("chapter_id"),
-                rs.getString("content_type"),
-                rs.getString("content"),
-                rs.getBoolean("is_hidden"),
-                rs.getString("created_by"),
-                rs.getInt("sequence_number")
+            rs.getString("section_id"),
+            rs.getString("textbook_id"),
+            rs.getString("block_id"),
+            rs.getString("chapter_id"),
+            rs.getString("content_type"),
+            rs.getString("content"),
+            rs.getBoolean("is_hidden"),
+            rs.getString("created_by"),
+            rs.getInt("sequence_number")
         );
     }
 }
