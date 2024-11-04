@@ -1,18 +1,20 @@
 package src.main.java.WolfBooks.models;
 
+import java.sql.Date;
+
 public class CourseModel {
 
     private String courseId;
     private String courseTitle;
     private String facultyId;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String courseType;
     private int capacity;
     private String token;
-    private int textbookId;
+    private String textbookId;
 
-    public CourseModel(String courseId, String courseTitle, String facultyId, String startDate, String endDate, String courseType, int capacity, String token, int textbookId) {
+    public CourseModel(String courseId, String courseTitle, String facultyId, Date startDate, Date endDate, String courseType, int capacity, String token, String textbookId) {
         setCourseId(courseId);
         setCourseTitle(courseTitle);
         setFacultyId(facultyId);
@@ -48,19 +50,19 @@ public class CourseModel {
         this.facultyId = facultyId;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -88,11 +90,11 @@ public class CourseModel {
         this.token = token;
     }
 
-    public int getTextbookId() {
+    public String getTextbookId() {
         return textbookId;
     }
 
-    public void setTextbookId(int textbookId) {
+    public void setTextbookId(String textbookId) {
         this.textbookId = textbookId;
     }
 }

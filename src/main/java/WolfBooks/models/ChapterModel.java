@@ -4,11 +4,11 @@ public class ChapterModel {
 
     private String chapterId;
     private String chapterTitle;
-    private int textbookId;
+    private String textbookId;
     private boolean isHidden;
     private String createdBy;
 
-    public ChapterModel(String chapterId, String chapterTitle, int textbookId, boolean isHidden, String createdBy) {
+    public ChapterModel(String chapterId, String chapterTitle, String textbookId, boolean isHidden, String createdBy) {
         setChapterId(chapterId);
         setChapterTitle(chapterTitle);
         setTextbookId(textbookId);
@@ -32,11 +32,11 @@ public class ChapterModel {
         this.chapterTitle = chapterTitle;
     }
 
-    public int getTextbookId() {
+    public String getTextbookId() {
         return textbookId;
     }
 
-    public void setTextbookId(int textbookId) {
+    public void setTextbookId(String textbookId) {
         this.textbookId = textbookId;
     }
 

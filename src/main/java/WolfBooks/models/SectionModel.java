@@ -1,64 +1,67 @@
 package src.main.java.WolfBooks.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SectionModel {
-
-    private int sectionId;
-    private int textbookId;
-    private int chapterId;
-
-    private String sectionTitle;
-    private int sectionNumber;
+    private String sectionId;
+    private String textbookId;
+    private String chapterId;
+    private String title;
+    private List<BlockModel> blocks;
     private boolean isHidden;
     private String createdBy;
 
-    public SectionModel(int sectionId, int textbookId, int chapterId, String sectionTitle, int sectionNumber, boolean isHidden, String createdBy) {
-        setSectionId(sectionId);
-        setTextbookId(textbookId);
-        setChapterId(chapterId);
-        setSectionTitle(sectionTitle);
-        setSectionNumber(sectionNumber);
-        setHidden(isHidden);
-        setCreatedBy(createdBy);
+    // Constructor
+    public SectionModel(String sectionId, String textbookId, String chapterId, String title, boolean isHidden, String createdBy) {
+        this.sectionId = sectionId;
+        this.textbookId = textbookId;
+        this.chapterId = chapterId;
+        this.title = title;
+        this.isHidden = isHidden;
+        this.createdBy = createdBy;
+        this.blocks = new ArrayList<>();
     }
 
-    public int getSectionId() {
+    // Getters and setters
+    public String getSectionId() {
         return sectionId;
     }
 
-    public void setSectionId(int sectionId) {
+    public void setSectionId(String sectionId) {
         this.sectionId = sectionId;
     }
 
-    public int getTextbookId() {
+    public String getTextbookId() {
         return textbookId;
     }
 
-    public void setTextbookId(int textbookId) {
+    public void setTextbookId(String textbookId) {
         this.textbookId = textbookId;
     }
 
-    public int getChapterId() {
+    public String getChapterId() {
         return chapterId;
     }
 
-    public void setChapterId(int chapterId) {
+    public void setChapterId(String chapterId) {
         this.chapterId = chapterId;
     }
 
-    public String getSectionTitle() {
-        return sectionTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSectionTitle(String sectionTitle) {
-        this.sectionTitle = sectionTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public int getSectionNumber() {
-        return sectionNumber;
+    public List<BlockModel> getBlocks() {
+        return blocks;
     }
 
-    public void setSectionNumber(int sectionNumber) {
-        this.sectionNumber = sectionNumber;
+    public void addBlock(BlockModel block) {
+        this.blocks.add(block);
     }
 
     public boolean isHidden() {
@@ -75,5 +78,30 @@ public class SectionModel {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    // Additional methods
+    public void removeBlock(String blockId) {
+        blocks.removeIf(block -> block.getBlockId().equals(blockId));
+    }
+
+    public BlockModel getBlockById(String blockId) {
+        return blocks.stream()
+                .filter(block -> block.getBlockId().equals(blockId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public String toString() {
+        return "SectionModel{" +
+                "sectionId='" + sectionId + '\'' +
+                ", textbookId='" + textbookId + '\'' +
+                ", chapterId='" + chapterId + '\'' +
+                ", title='" + title + '\'' +
+                ", blocksCount=" + blocks.size() +
+                ", isHidden=" + isHidden +
+                ", createdBy='" + createdBy + '\'' +
+                '}';
     }
 }

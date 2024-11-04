@@ -2,27 +2,27 @@ package src.main.java.WolfBooks.models;
 
 public class TextbookModel {
 
-    private int textbookID;
-    private String textbookName;
+    private String textbookID;
+    private String textbookTitle;
 
-    public TextbookModel(int textbookID, String textbookName) {
+    public TextbookModel(String textbookID, String textbookTitle) {
         setTextbookID(textbookID);
-        setTextbookName(textbookName);
+        setTextbookTitle(textbookTitle);
     }
 
-    public int getTextbookID() {
+    public String getTextbookID() {
         return textbookID;
     }
 
-    public void setTextbookID(int textbookID) {
+    public String getTextbookTitle() {
+        return textbookTitle;
+    }
+
+    public void setTextbookID(String textbookID) {
         this.textbookID = textbookID;
     }
 
-    public String getTextbookName() {
-        return textbookName;
-    }
-
-    public void setTextbookName(String textbookName) {
-        this.textbookName = textbookName;
+    public void setTextbookTitle(String textbookTitle) {
+        this.textbookTitle = textbookTitle;
     }
 }

@@ -11,7 +11,7 @@ public class UserDAO {
     // ==================== Authentication Operations ====================
     public UserModel authenticateUser(String userId, String password) throws SQLException {
         String query = "SELECT * FROM Users WHERE user_id = ? AND password = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, userId);
             stmt.setString(2, password);
@@ -27,7 +27,7 @@ public class UserDAO {
     public boolean createUser(UserModel user) throws SQLException {
         String query = "INSERT INTO Users (user_id, firstname, lastname, email, password, user_role, first_login) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, user.getUserId());
             stmt.setString(2, user.getFirstName());
@@ -54,7 +54,7 @@ public class UserDAO {
 
         Connection conn = null;
         try {
-            conn = DatabaseConnection.getConnection();
+            conn = DatabaseConnection.getInstance().getConnection();
             conn.setAutoCommit(false);
 
             boolean userCreated = createUser(ta);
@@ -92,7 +92,7 @@ public class UserDAO {
     // ==================== User Lookup Operations ====================
     public UserModel findById(String userId) throws SQLException {
         String query = "SELECT * FROM Users WHERE user_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -105,7 +105,7 @@ public class UserDAO {
 
     public UserModel findByEmail(String email) throws SQLException {
         String query = "SELECT * FROM Users WHERE email = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -119,7 +119,7 @@ public class UserDAO {
     public List<UserModel> listAllUsers() throws SQLException {
         List<UserModel> users = new ArrayList<>();
         String query = "SELECT * FROM Users";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
@@ -132,7 +132,7 @@ public class UserDAO {
     public List<UserModel> findUsersByRole(String role) throws SQLException {
         List<UserModel> users = new ArrayList<>();
         String query = "SELECT * FROM Users WHERE user_role = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, role.toLowerCase());
             ResultSet rs = stmt.executeQuery();
@@ -146,7 +146,7 @@ public class UserDAO {
     // ==================== Password Management ====================
     public boolean changePassword(String userId, String currentPassword, String newPassword) throws SQLException {
         String verifyQuery = "SELECT * FROM Users WHERE user_id = ? AND password = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement verifyStmt = conn.prepareStatement(verifyQuery)) {
 
             verifyStmt.setString(1, userId);

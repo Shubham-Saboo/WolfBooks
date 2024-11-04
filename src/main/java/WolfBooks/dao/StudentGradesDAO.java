@@ -13,7 +13,7 @@ public class StudentGradesDAO {
     public boolean addStudentGrade(StudentGradesModel studentGradesModel) {
         String sqlQuery = "INSERT INTO studentgrades (student_id, course_id, total_points, total_activities) VALUES (?, ?, ?, ?)";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, studentGradesModel.getStudentId());
             stmt.setString(2, studentGradesModel.getCourseId());
@@ -29,7 +29,7 @@ public class StudentGradesDAO {
     public StudentGradesModel getStudentGrade(String studentId, String courseId) {
         String sqlQuery = "SELECT * FROM studentgrades WHERE student_id = ? AND course_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, studentId);
             stmt.setString(2, courseId);
@@ -45,7 +45,7 @@ public class StudentGradesDAO {
         String sqlQuery = "UPDATE studentgrades SET total_points = ?, total_activities = ? " +
                 "WHERE student_id = ? AND course_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setInt(1, studentGrade.getTotalPoints());
             stmt.setInt(2, studentGrade.getTotalActivities());
