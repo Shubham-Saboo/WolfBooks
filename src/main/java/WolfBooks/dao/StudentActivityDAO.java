@@ -15,7 +15,7 @@ public class StudentActivityDAO {
         String sqlQuery = "SELECT * FROM studentactivities WHERE student_id = ? AND course_id = ? AND textbook_id = ? AND " +
                 "chapter_id = ? AND section_id = ? AND block_id = ? AND question_id = ? AND unique_activity_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, studentId);
             stmt.setString(2, courseId);
@@ -36,7 +36,7 @@ public class StudentActivityDAO {
     public boolean addStudentActivity(StudentActivityModel studentActivityModel) {
         String sqlQuery = "INSERT INTO studentactivities VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, studentActivityModel.getStudentId());
             stmt.setString(2, studentActivityModel.getCourseId());
@@ -60,7 +60,7 @@ public class StudentActivityDAO {
                 "WHERE student_id = ? AND course_id = ? AND textbook_id = ? AND chapter_id = ? " +
                 "AND section_id = ? AND block_id = ? AND question_id = ? AND unique_activity_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setInt(1, studentActivityModel.getScore());
             stmt.setString(2, studentActivityModel.getTimestamp());

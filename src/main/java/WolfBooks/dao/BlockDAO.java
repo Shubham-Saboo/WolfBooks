@@ -18,11 +18,11 @@ public class BlockDAO {
      * @param block The model block to be added to the database.
      * @return true if the block was added, false otherwise
      */
-    public boolean addBlock(BlockModel block) {
-        String sqlQuery = "INSERT INTO blocks (section_id, textbook_id, block_id, chapter_id, content_type, content, is_hidden, created_by, sequence_number) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean createBlock(BlockModel block) {
+        String sqlQuery = "INSERT INTO blocks (section_id, textbook_id, block_id, chapter_id, content_type, content, is_hidden, created_by) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, block.getSectionId());
             stmt.setString(2, block.getTextbookId());
@@ -32,7 +32,6 @@ public class BlockDAO {
             stmt.setString(6, block.getContent());
             stmt.setBoolean(7, block.isHidden());
             stmt.setString(8, block.getCreatedBy());
-            stmt.setInt(9, block.getSequenceNumber());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -44,7 +43,7 @@ public class BlockDAO {
         String sqlQuery = "UPDATE blocks SET content_type = ?, content = ?, is_hidden = ? " +
                 "WHERE section_id = ? AND textbook_id = ? AND block_id = ? AND chapter_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, block.getContentType());
             stmt.setString(2, block.getContent());
@@ -68,7 +67,7 @@ public class BlockDAO {
     public boolean deleteBlock(BlockModel block) {
         String sqlQuery = "DELETE FROM blocks WHERE section_id = ? AND textbook_id = ? AND block_id = ? AND chapter_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, block.getSectionId());
             stmt.setString(2, block.getTextbookId());
@@ -92,7 +91,7 @@ public class BlockDAO {
     public BlockModel findBlock(String textbookId, String chapterId, String sectionId, String blockId) {
         String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, textbookId);
             stmt.setString(2, chapterId);
@@ -111,7 +110,7 @@ public class BlockDAO {
     public List<BlockModel> findBlocksBySection(String textbookId, String chapterId, String sectionId) {
                 String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            Connection conn = DatabaseConnection.getInstance().getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, textbookId);
             stmt.setString(2, chapterId);
@@ -141,8 +140,7 @@ public class BlockDAO {
             rs.getString("content_type"),
             rs.getString("content"),
             rs.getBoolean("is_hidden"),
-            rs.getString("created_by"),
-            rs.getInt("sequence_number")
+            rs.getString("created_by")
         );
     }
 }

@@ -10,9 +10,8 @@ public class BlockModel {
     private String content;
     private boolean isHidden;
     private String createdBy;
-    private int sequenceNumber;
 
-    public BlockModel(String sectionId, String textbookId, String blockId, String chapterId, String contentType, String content, boolean isHidden, String createdBy, int sequenceNumber) {
+    public BlockModel(String sectionId, String textbookId, String blockId, String chapterId, String contentType, String content, boolean isHidden, String createdBy) {
         setSectionId(sectionId);
         setTextbookId(textbookId);
         setBlockId(blockId);
@@ -21,7 +20,6 @@ public class BlockModel {
         setContent(content);
         setHidden(isHidden);
         setCreatedBy(createdBy);
-        setSequenceNumber(sequenceNumber);
     }
 
     public String getSectionId() {
@@ -88,11 +86,4 @@ public class BlockModel {
         this.createdBy = createdBy;
     }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
 }

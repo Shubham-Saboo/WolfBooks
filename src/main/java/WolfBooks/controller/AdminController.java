@@ -271,7 +271,7 @@ public class AdminController {
             switch (choice) {
                 case "1":
                     // Save text in the database using AdminService
-                    if (adminService.createBlock(textbookId, chapterId, sectionId, blockId, "text", textContent, false, "Admin")) {
+                    if (adminService.createBlock(sectionId, textbookId, blockId, chapterId, "text", textContent, false, "Admin")) {
                         System.out.println("Text added successfully!");
                     } else {
                         System.out.println("Failed to add text.");
@@ -308,7 +308,7 @@ public class AdminController {
             switch (choice) {
                 case "1":
                     // Save picture in the database using AdminService
-                    if (adminService.createBlock(textbookId, chapterId, sectionId, blockId, "picture", pictureUrl, false, "Admin" )) {
+                    if (adminService.createBlock(sectionId, textbookId, blockId, chapterId, "picture", pictureUrl, false, "Admin" )) {
                         System.out.println("Picture added successfully!");
                     } else {
                         System.out.println("Failed to add picture.");
@@ -345,7 +345,7 @@ public class AdminController {
             switch (choice) {
                 case "1":
                     // Save activity in the database using AdminService
-                    if (adminService.createBlock(textbookId, chapterId, sectionId, blockId, "activity", activityId, false, "Admin")) {
+                    if (adminService.createBlock(sectionId, textbookId, blockId, chapterId, "activity", activityId, false, "Admin")) {
                         adminService.createActivity(textbookId, chapterId, sectionId, blockId, activityId, false, "Admin");
                         System.out.println("Activity added successfully!");
                         handleAddQuestion(textbookId, chapterId, sectionId, blockId, activityId); // Redirect to add questions if needed
