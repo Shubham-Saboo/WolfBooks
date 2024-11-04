@@ -11,18 +11,20 @@ import src.main.java.WolfBooks.models.UserModel;
 
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class StudentService {
     private final UserDAO userDAO;
-//    private final BlockDAO blockDAO;
-//    private final SectionDAO sectionDAO;
+    private final BlockDAO blockDAO;
+    private final SectionDAO sectionDAO;
     private final StudentActivityDAO studentActivityDAO;
     private final StudentGradesDAO studentGradesDAO;
 
-    public StudentService(UserDAO userDAO, StudentActivityDAO studentActivityDAO, StudentGradesDAO studentGradesDAO) {
+    public StudentService(UserDAO userDAO, StudentActivityDAO studentActivityDAO, StudentGradesDAO studentGradesDAO, BlockDAO blockDAO) {
         this.userDAO = userDAO;
         this.studentActivityDAO = studentActivityDAO;
         this.studentGradesDAO = studentGradesDAO;
+        this.blockDAO = blockDAO;
     }
 
     public UserModel authenticateUser(String userId, String password, String role) {
@@ -51,28 +53,13 @@ public class StudentService {
     }
 
     // TODO Add in a new method to get all student activities
-    public StudentActivityModel viewStudentActivities(String studentId) {
-//        try {
-//            return studentActivityDAO.getStudentActivities();
-//
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-
-        return null;
+    public List<StudentActivityModel> viewStudentActivities(String studentId) {
+        return studentActivityDAO.getStudentActivities(studentId);
     }
 
     // TODO Finish this with SectionDAO
     public SectionModel viewSection(String chapterId, String sectionId) {
-//        try {
-//            return
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-
-        return null;
+        return
     }
 
     public BlockModel viewBlock(String blockId) {

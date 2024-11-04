@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentActivityDAO {
 
@@ -27,6 +29,24 @@ public class StudentActivityDAO {
             stmt.setString(8, uniqueActivityId);
             ResultSet rs = stmt.executeQuery();
             return mapResultSetToSA(rs);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<StudentActivityModel> getStudentActivities(String studentId) {
+        String sqlQuery = "SELECT * FROM studentactivities WHERE student_id = ?";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+            stmt.setString(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+            List<StudentActivityModel> studentActivities = new ArrayList<>();
+            while (rs.next()) {
+                studentActivities.add(mapResultSetToSA(rs));
+            }
+            return studentActivities;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
