@@ -11,12 +11,13 @@ public class LandingPageController {
     // TODO: Add other controllers when implemented
     // private final FacultyController facultyController;
     // private final TAController taController;
-    // private final StudentController studentController;
+     private final StudentController studentController;
 
     public LandingPageController(AdminService adminService) {
         this.adminService = adminService;
         this.scanner = new Scanner(System.in);
         this.adminController = new AdminController(adminService);
+        this.studentController = new StudentController();
     }
 
     public void start() {
@@ -83,7 +84,8 @@ public class LandingPageController {
                         System.out.println("TA login successful! (Controller not implemented)");
                         break;
                     case "student":
-                        System.out.println("Student login successful! (Controller not implemented)");
+//                        System.out.println("Student login successful! (Controller not implemented)");
+                        studentController.start();
                         break;
                 }
             } else {

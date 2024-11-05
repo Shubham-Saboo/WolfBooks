@@ -116,6 +116,21 @@ public class UserDAO {
         return null;
     }
 
+    public UserModel findByEmailAndRole(String email, String role) {
+        String query = "SELECT * FROM Users WHERE email = ? and user_role = ?";
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, email);
+            stmt.setString(2, role);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? mapResultSetToUser(rs) : null;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public List<UserModel> listAllUsers() throws SQLException {
         List<UserModel> users = new ArrayList<>();
         String query = "SELECT * FROM Users";

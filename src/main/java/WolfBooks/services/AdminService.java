@@ -240,64 +240,57 @@ public class AdminService {
         }
     }
 
+    private void validateQuestionInput(String questionId, String questionText,
+                                       List<String> options, List<String> explanations, char correctAnswer) {
+        if (questionId == null || questionId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Question ID cannot be empty");
+        }
+        if (questionText == null || questionText.trim().isEmpty()) {
+            throw new IllegalArgumentException("Question text cannot be empty");
+        }
+        if (options == null || options.size() != 4) {
+            throw new IllegalArgumentException("Must provide exactly 4 options");
+        }
+        if (explanations == null || explanations.size() != 4) {
+            throw new IllegalArgumentException("Must provide exactly 4 explanations");
+        }
+        if (!Arrays.asList('A', 'B', 'C', 'D').contains(correctAnswer)) {
+            throw new IllegalArgumentException("Invalid correct answer option");
+        }
+    }
 
+    private void validateCourseInput(String courseId, String courseName, String textbookId,
+                                     String facultyId, Date startDate, Date endDate) {
+        if (courseId == null || courseId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Course ID cannot be empty");
+        }
+        if (courseName == null || courseName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Course name cannot be empty");
+        }
+        if (textbookId == null || textbookId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Textbook ID cannot be empty");
+        }
+        if (facultyId == null || facultyId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Faculty ID cannot be empty");
+        }
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("Course dates cannot be empty");
+        }
+        if (startDate.after(endDate)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+    }
 
+    private void validateActiveTokenAndCapacity(String token, int capacity) {
+        if (token == null || token.length() != 7) {
+            throw new IllegalArgumentException("Token must be exactly 7 characters");
+        }
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Capacity must be greater than 0");
+        }
+    }
 
-
-
-
-
-private void validateQuestionInput(String questionId, String questionText,
-                                   List<String> options, List<String> explanations, char correctAnswer) {
-    if (questionId == null || questionId.trim().isEmpty()) {
-        throw new IllegalArgumentException("Question ID cannot be empty");
+    private String generateUniqueFacultyId() {
+        return "F" + System.currentTimeMillis();
     }
-    if (questionText == null || questionText.trim().isEmpty()) {
-        throw new IllegalArgumentException("Question text cannot be empty");
-    }
-    if (options == null || options.size() != 4) {
-        throw new IllegalArgumentException("Must provide exactly 4 options");
-    }
-    if (explanations == null || explanations.size() != 4) {
-        throw new IllegalArgumentException("Must provide exactly 4 explanations");
-    }
-    if (!Arrays.asList('A', 'B', 'C', 'D').contains(correctAnswer)) {
-        throw new IllegalArgumentException("Invalid correct answer option");
-    }
-}
-
-private void validateCourseInput(String courseId, String courseName, String textbookId,
-                                 String facultyId, Date startDate, Date endDate) {
-    if (courseId == null || courseId.trim().isEmpty()) {
-        throw new IllegalArgumentException("Course ID cannot be empty");
-    }
-    if (courseName == null || courseName.trim().isEmpty()) {
-        throw new IllegalArgumentException("Course name cannot be empty");
-    }
-    if (textbookId == null || textbookId.trim().isEmpty()) {
-        throw new IllegalArgumentException("Textbook ID cannot be empty");
-    }
-    if (facultyId == null || facultyId.trim().isEmpty()) {
-        throw new IllegalArgumentException("Faculty ID cannot be empty");
-    }
-    if (startDate == null || endDate == null) {
-        throw new IllegalArgumentException("Course dates cannot be empty");
-    }
-    if (startDate.after(endDate)) {
-        throw new IllegalArgumentException("Start date must be before end date");
-    }
-}
-
-private void validateActiveTokenAndCapacity(String token, int capacity) {
-    if (token == null || token.length() != 7) {
-        throw new IllegalArgumentException("Token must be exactly 7 characters");
-    }
-    if (capacity <= 0) {
-        throw new IllegalArgumentException("Capacity must be greater than 0");
-    }
-}
-
-private String generateUniqueFacultyId() {
-    return "F" + System.currentTimeMillis();
-}
 }
