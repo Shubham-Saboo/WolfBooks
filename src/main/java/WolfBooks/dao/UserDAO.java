@@ -17,6 +17,7 @@ public class UserDAO {
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+
                 return mapResultSetToUser(rs);
             }
         }

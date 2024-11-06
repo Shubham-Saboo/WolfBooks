@@ -387,6 +387,6 @@ public class AdminService {
         String firstTwoLettersLastName = lastName.length() >= 2 ? lastName.substring(0, 2) : lastName;
 
         // Concatenate with '1024' to form the unique faculty ID
-        return firstTwoLettersFirstName + firstTwoLettersLastName + "1024";
+        return firstTwoLettersFirstName + firstTwoLettersLastName + "1124";
     }
 }
