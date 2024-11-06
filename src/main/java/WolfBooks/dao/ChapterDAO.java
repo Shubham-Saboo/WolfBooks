@@ -30,7 +30,7 @@ public class ChapterDAO {
     }
 
     // Retrieve a chapter by ID
-    public ChapterModel getChapterById(String textbookId, String chapterId) {
+    public static ChapterModel getChapterById(String textbookId, String chapterId) {
         String sql = "SELECT * FROM Chapters WHERE textbook_id = ? AND chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -102,7 +102,7 @@ public class ChapterDAO {
     }
 
     // Utility method to extract ChapterModel from ResultSet
-    private ChapterModel extractChapterFromResultSet(ResultSet rs) throws SQLException {
+    private static ChapterModel extractChapterFromResultSet(ResultSet rs) throws SQLException {
         ChapterModel chapter = new ChapterModel(
                 rs.getString("chapter_id"),
                 rs.getString("chapter_title"),

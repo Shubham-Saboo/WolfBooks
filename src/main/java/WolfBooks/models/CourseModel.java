@@ -1,6 +1,7 @@
 package src.main.java.WolfBooks.models;
 
-import java.sql.Date;
+
+import java.util.Date;
 
 public class CourseModel {
 
@@ -50,9 +51,7 @@ public class CourseModel {
         this.facultyId = facultyId;
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
+    public Date getStartDate() { return startDate;}
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;

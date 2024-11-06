@@ -31,7 +31,7 @@ public class SectionDAO {
     }
 
     // Retrieve a section by ID
-    public SectionModel getSectionById(String textbookId, String chapterId, String sectionId) {
+    public static SectionModel getSectionById(String textbookId, String chapterId, String sectionId) {
         String sql = "SELECT * FROM Sections WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -107,7 +107,7 @@ public class SectionDAO {
     }
 
     // Utility method to extract SectionModel from ResultSet
-    private SectionModel extractSectionFromResultSet(ResultSet rs) throws SQLException {
+    private static SectionModel extractSectionFromResultSet(ResultSet rs) throws SQLException {
         return new SectionModel(
                 rs.getString("section_id"),
                 rs.getString("textbook_id"),

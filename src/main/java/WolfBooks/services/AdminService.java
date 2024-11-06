@@ -17,6 +17,7 @@ public class AdminService {
     private final BlockDAO blockDAO = new BlockDAO();
     private final ActivityDAO activityDAO = new ActivityDAO();
     private final QuestionDAO questionDAO = new QuestionDAO();
+    private final CourseDAO courseDAO = new CourseDAO();
 
     public AdminService(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -41,7 +42,7 @@ public class AdminService {
                 throw new RuntimeException("Email already exists");
             }
 
-            String facultyId = generateUniqueFacultyId();
+            String facultyId = generateUniqueFacultyId(firstName, lastName);
             UserModel faculty = new UserModel(
                     facultyId,
                     firstName,
@@ -90,14 +91,14 @@ public class AdminService {
 
     // Block Management with isHidden and createdBy
     public boolean createBlock(String textbookId, String chapterId, String sectionId,
-                               String blockId,String contentType,
+                               String blockId, String contentType,
                                String content,
                                boolean isHidden,
                                String createdBy) {
-        if (!validateBlockInput(blockId,contentType)) {
+        if (!validateBlockInput(blockId, contentType)) {
             return false;
         }
-        BlockModel block=   new BlockModel(textbookId ,chapterId , sectionId , blockId , contentType ,content ,isHidden ,createdBy);
+        BlockModel block = new BlockModel(textbookId, chapterId, sectionId, blockId, contentType, content, isHidden, createdBy);
 
         return blockDAO.createBlock(block);
 
@@ -117,19 +118,24 @@ public class AdminService {
         return activityDAO.createActivity(activity);
     }
 
-    public boolean addQuestion(String textbookId,String chapterId,String sectionId,String blockId,
-                               String activityId,String questionId,String questionText,
-                               String explanationOne,String explanationTwo,String explanationThree,
-                               String explanationFour, String optionOne,String optionTwo,String optionThree,String optionFour,
+    public boolean addQuestion(String textbookId, String chapterId, String sectionId, String blockId,
+                               String activityId, String questionId, String questionText,
+                               String explanationOne, String explanationTwo, String explanationThree,
+                               String explanationFour, String optionOne, String optionTwo, String optionThree, String optionFour,
                                String correctAnswer) {
-
+        if (!validateQuestionInput(questionId,questionText,
+                optionOne, optionTwo,
+                optionThree, optionFour,
+                explanationOne, explanationTwo,
+                explanationThree, explanationFour,
+                correctAnswer)) {
+            return false;
+        }
         QuestionModel question = new QuestionModel(textbookId, chapterId, sectionId, blockId, activityId,
                 questionId, questionText, explanationOne, explanationTwo, explanationThree, explanationFour,
                 optionOne, optionTwo, optionThree, optionFour, correctAnswer);
         return questionDAO.createQuestion(question);
     }
-
-
 
 
     // Validation Methods
@@ -188,21 +194,104 @@ public class AdminService {
         return true;
     }
 
+    private boolean validateQuestionInput(String questionId, String questionText,
+                                          String optionOne, String optionTwo,
+                                          String optionThree, String optionFour,
+                                          String explanationOne, String explanationTwo,
+                                          String explanationThree, String explanationFour,
+                                          String correctAnswer) {
+        // Validate Question ID
+        if (questionId == null || questionId.trim().isEmpty()) {
+            System.out.println("Question ID cannot be empty.");
+            return false;
+        }
+
+        // Validate Question Text
+        if (questionText == null || questionText.trim().isEmpty()) {
+            System.out.println("Question text cannot be empty.");
+            return false;
+        }
+
+        // Validate Options
+        if (optionOne == null || optionOne.trim().isEmpty()) {
+            System.out.println("Option 1 cannot be empty.");
+            return false;
+        }
+        if (optionTwo == null || optionTwo.trim().isEmpty()) {
+            System.out.println("Option 2 cannot be empty.");
+            return false;
+        }
+        if (optionThree == null || optionThree.trim().isEmpty()) {
+            System.out.println("Option 3 cannot be empty.");
+            return false;
+        }
+        if (optionFour == null || optionFour.trim().isEmpty()) {
+            System.out.println("Option 4 cannot be empty.");
+            return false;
+        }
+
+        // Validate Explanations
+        if (explanationOne == null || explanationOne.trim().isEmpty()) {
+            System.out.println("Explanation for Option 1 cannot be empty.");
+            return false;
+        }
+        if (explanationTwo == null || explanationTwo.trim().isEmpty()) {
+            System.out.println("Explanation for Option 2 cannot be empty.");
+            return false;
+        }
+        if (explanationThree == null || explanationThree.trim().isEmpty()) {
+            System.out.println("Explanation for Option 3 cannot be empty.");
+            return false;
+        }
+        if (explanationFour == null || explanationFour.trim().isEmpty()) {
+            System.out.println("Explanation for Option 4 cannot be empty.");
+            return false;
+        }
+
+        // Validate Correct Answer
+        if (correctAnswer == null || !correctAnswer.matches("[1-4]")) {
+            System.out.println("Correct answer must be one of the options (1/2/3/4).");
+            return false;
+        }
+
+        // If all validations pass, return true
+        return true;
+    }
 
     // Course Management
     public boolean createActiveCourse(String courseId, String courseName, String textbookId,
                                       String facultyId, Date startDate, Date endDate,
                                       String token, int capacity) {
         try {
+            // Step 1: Validate input
             validateCourseInput(courseId, courseName, textbookId, facultyId, startDate, endDate);
             validateActiveTokenAndCapacity(token, capacity);
 
+            // Step 2: Check if faculty member exists
             if (userDAO.findById(facultyId) == null) {
                 throw new RuntimeException("Faculty member not found");
             }
 
-            // TODO: Implement when CourseDAO is available
-            throw new UnsupportedOperationException("Not implemented yet");
+            // Step 3: Check if textbook exists
+            if (textbookDAO.getTextbookById(textbookId) == null) {
+                throw new RuntimeException("Textbook not found");
+            }
+
+            // Step 4: Create a new CourseModel object
+            CourseModel newCourse = new CourseModel(
+                    courseId,
+                    courseName,
+                    facultyId,
+                    startDate,
+                    endDate,
+                    "Active",  // Active course type
+                    capacity,
+                    token,
+                    textbookId
+            );
+
+            // Step 5: Save the course using CourseDAO
+            return courseDAO.createCourse(newCourse);
         } catch (SQLException e) {
             throw new RuntimeException("Database error: " + e.getMessage());
         }
@@ -211,14 +300,34 @@ public class AdminService {
     public boolean createEvaluationCourse(String courseId, String courseName, String textbookId,
                                           String facultyId, Date startDate, Date endDate) {
         try {
+            // Step 1: Validate input
             validateCourseInput(courseId, courseName, textbookId, facultyId, startDate, endDate);
 
+            // Step 2: Check if faculty member exists
             if (userDAO.findById(facultyId) == null) {
                 throw new RuntimeException("Faculty member not found");
             }
 
-            // TODO: Implement when CourseDAO is available
-            throw new UnsupportedOperationException("Not implemented yet");
+            // Step 3: Check if textbook exists
+            if (textbookDAO.getTextbookById(textbookId) == null) {
+                throw new RuntimeException("Textbook not found");
+            }
+
+            // Step 4: Create a new CourseModel object
+            CourseModel newCourse = new CourseModel(
+                    courseId,
+                    courseName,
+                    facultyId,
+                    (java.sql.Date) startDate,
+                    (java.sql.Date) endDate,
+                    "Evaluation",  // Evaluation course type
+                    0,  // Capacity is 0 for evaluation courses by default
+                    null,  // No token needed for evaluation courses
+                    textbookId
+            );
+
+            // Step 5: Save the course using CourseDAO
+            return courseDAO.createCourse(newCourse);
         } catch (SQLException e) {
             throw new RuntimeException("Database error: " + e.getMessage());
         }
@@ -240,24 +349,6 @@ public class AdminService {
         }
     }
 
-    private void validateQuestionInput(String questionId, String questionText,
-                                       List<String> options, List<String> explanations, char correctAnswer) {
-        if (questionId == null || questionId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Question ID cannot be empty");
-        }
-        if (questionText == null || questionText.trim().isEmpty()) {
-            throw new IllegalArgumentException("Question text cannot be empty");
-        }
-        if (options == null || options.size() != 4) {
-            throw new IllegalArgumentException("Must provide exactly 4 options");
-        }
-        if (explanations == null || explanations.size() != 4) {
-            throw new IllegalArgumentException("Must provide exactly 4 explanations");
-        }
-        if (!Arrays.asList('A', 'B', 'C', 'D').contains(correctAnswer)) {
-            throw new IllegalArgumentException("Invalid correct answer option");
-        }
-    }
 
     private void validateCourseInput(String courseId, String courseName, String textbookId,
                                      String facultyId, Date startDate, Date endDate) {
@@ -290,7 +381,12 @@ public class AdminService {
         }
     }
 
-    private String generateUniqueFacultyId() {
-        return "F" + System.currentTimeMillis();
+    private String generateUniqueFacultyId(String firstName, String lastName) {
+        // Extract the first two letters from firstName and lastName
+        String firstTwoLettersFirstName = firstName.length() >= 2 ? firstName.substring(0, 2) : firstName;
+        String firstTwoLettersLastName = lastName.length() >= 2 ? lastName.substring(0, 2) : lastName;
+
+        // Concatenate with '1024' to form the unique faculty ID
+        return firstTwoLettersFirstName + firstTwoLettersLastName + "1024";
     }
 }

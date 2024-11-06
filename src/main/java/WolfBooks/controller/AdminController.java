@@ -2,8 +2,8 @@ package src.main.java.WolfBooks.controller;
 
 import src.main.java.WolfBooks.services.AdminService;
 import src.main.java.WolfBooks.models.UserModel;
+import src.main.java.WolfBooks.dao.*;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -443,9 +443,17 @@ public class AdminController {
     private void handleModifyETextbooks() {
         System.out.println("\n=== Modify E-textbook ===");
         try {
+            // Step 1: Get E-textbook ID from the user
             System.out.print("Enter E-textbook ID: ");
             String textbookId = scanner.nextLine();
 
+            // Step 2: Check if the textbook exists in the database using textbookDAO
+            if (TextbookDAO.getTextbookById(textbookId) == null) {
+                System.out.println("Error: Textbook not found.");
+                return; // Exit the method if textbook doesn't exist
+            }
+
+            // Step 3: Display modification options
             System.out.println("1. Add New Chapter");
             System.out.println("2. Modify Chapter");
             System.out.println("3. Go Back");
@@ -453,6 +461,7 @@ public class AdminController {
             System.out.print("Enter your choice (1-4): ");
             String choice = scanner.nextLine();
 
+            // Step 4: Handle user choice
             switch (choice) {
                 case "1":
                     handleAddNewChapter(textbookId);
@@ -461,9 +470,152 @@ public class AdminController {
                     handleModifyChapter(textbookId);
                     break;
                 case "3":
-                    return;
+                    return; // Go back to the previous menu
                 case "4":
-                    showAdminMenu();
+                    showAdminMenu(); // Go back to the admin landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    handleModifyETextbooks(); // Recursive call for invalid input
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleModifyChapter(String textbookId) {
+        System.out.println("\n=== Modify Chapter ===");
+        try {
+            // Step 1: Get Chapter ID from the user
+            System.out.print("Enter Chapter ID: ");
+            String chapterId = scanner.nextLine();
+
+            // Step 2: Check if the chapter exists in the database using ChapterDAO
+            if (ChapterDAO.getChapterById(textbookId, chapterId) == null) {
+                System.out.println("Error: Chapter not found.");
+                return; // Exit the method if chapter doesn't exist
+            }
+
+            // Step 3: Display modification options
+            System.out.println("1. Add New Section");
+            System.out.println("2. Modify Section");
+            System.out.println("3. Go Back");
+            System.out.println("4. Landing Page");
+            System.out.print("Enter your choice (1-4): ");
+            String choice = scanner.nextLine();
+
+            // Step 4: Handle user choice
+            switch (choice) {
+                case "1":
+                    handleAddNewSection(textbookId, chapterId);
+                    break;
+                case "2":
+                    handleModifySection(textbookId, chapterId);
+                    break;
+                case "3":
+                    return; // Go back to the previous menu
+                case "4":
+                    showAdminMenu(); // Go back to the admin landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    handleModifyChapter(textbookId); // Recursive call for invalid input
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleModifySection(String textbookId, String chapterId) {
+        System.out.println("\n=== Modify Section ===");
+        try {
+            // Step 1: Get Section ID from the user
+            System.out.print("Enter Section ID: ");
+            String sectionId = scanner.nextLine();
+
+            // Step 2: Check if the section exists in the database using SectionDAO
+            if (SectionDAO.getSectionById(textbookId, chapterId, sectionId) == null) {
+                System.out.println("Error: Section not found.");
+                return; // Exit the method if section doesn't exist
+            }
+
+            // Step 3: Display modification options
+            System.out.println("1. Add New Block");
+            System.out.println("2. Modify Block");
+            System.out.println("3. Go Back");
+            System.out.println("4. Landing Page");
+            System.out.print("Enter your choice (1-4): ");
+            String choice = scanner.nextLine();
+
+            // Step 4: Handle user choice
+            switch (choice) {
+                case "1":
+                    handleAddNewBlock(textbookId, chapterId, sectionId);
+                    break;
+                case "2":
+                    handleModifyBlock(textbookId, chapterId, sectionId);
+                    break;
+                case "3":
+                    return; // Go back to the previous menu
+                case "4":
+                    showAdminMenu(); // Go back to the admin landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    handleModifySection(textbookId, chapterId); // Recursive call for invalid input
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleModifyBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.println("\n=== Modify Content Block ===");
+        try {
+            // Step 1: Get Block ID from the user
+            System.out.print("Enter Content Block ID: ");
+            String blockId = scanner.nextLine();
+
+            // Step 2: Check if the block exists in the database using BlockDAO
+            if (BlockDAO.findBlock(textbookId, chapterId, sectionId, blockId) == null) {
+                System.out.println("Error: Block not found.");
+                return; // Exit the method if block doesn't exist
+            }
+
+            // Step 3: Display options for modifying the block
+            System.out.println("1. Add Text");
+            System.out.println("2. Add Picture");
+            System.out.println("3. Add New Activity");
+            System.out.println("4. Go Back");
+            System.out.println("5. Landing Page");
+            System.out.print("Enter your choice (1-5): ");
+            String choice = scanner.nextLine();
+
+            // Step 4: Handle user choice
+            switch (choice) {
+                case "1":
+                    // Option 1: Redirect to add text
+                    handleAddText(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "2":
+                    // Option 2: Redirect to add picture
+                    handleAddPicture(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "3":
+                    // Option 3: Redirect to add activity
+                    handleAddActivity(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "4":
+                    return; // Go back to the previous menu
+                case "5":
+                    showAdminMenu(); // Go back to the admin landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    handleModifyBlock(textbookId, chapterId, sectionId); // Recursive call for invalid input
                     break;
             }
         } catch (Exception e) {
@@ -503,6 +655,7 @@ public class AdminController {
             System.out.println("3. Landing Page");
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
+
 
             switch (choice) {
                 case "1":
@@ -570,9 +723,5 @@ public class AdminController {
             System.out.println("Error: " + e.getMessage());
         }
     }
-    
 
-    private void handleModifyChapter(String textbookId) {
-        // Implementation for modifying chapter
-    }
 }
