@@ -36,12 +36,15 @@ public class App {
             ChapterDAO chapterDAO = new ChapterDAO();
             SectionDAO sectionDAO = new SectionDAO();
             BlockDAO blockDAO = new BlockDAO();
+            TeachingAssistantDAO teachingAssistantDAO = new TeachingAssistantDAO();
+            
 
             // TODO: Initialize other DAOs when implemented
 
             // Initialize Services
             AdminService adminService = new AdminService(userDAO);
             WolfbooksService wolfbooksService = new WolfbooksService(conn);
+            TeachingAssistantService taService = new TeachingAssistantService(teachingAssistantDAO);
 
             // Initialize Controllers
             LandingPageController landingPage = new LandingPageController(adminService);
