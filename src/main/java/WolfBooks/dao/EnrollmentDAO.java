@@ -1,6 +1,7 @@
 package src.main.java.WolfBooks.dao;
 
 import src.main.java.WolfBooks.models.EnrollmentModel;
+import src.main.java.WolfBooks.models.UserModel;
 import src.main.java.WolfBooks.util.DatabaseConnection;
 
 import java.sql.*;
@@ -45,6 +46,26 @@ public class EnrollmentDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<EnrollmentModel> getStudentEnrollments(UserModel student) {
+        final String enrolled = "enrolled";
+        String sql = "SELECT * FROM Enrollments WHERE user_id = ? AND user_status = ?";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, student.getUserId());
+            pstmt.setString(2, enrolled);
+            ResultSet rs = pstmt.executeQuery();
+            List<EnrollmentModel> enrollments = new ArrayList<>();
+            while (rs.next()) {
+                enrollments.add(extractEnrollmentFromResultSet(rs));
+            }
+            return enrollments;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     // Retrieve all enrollments for a specific course

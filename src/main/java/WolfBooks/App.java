@@ -17,7 +17,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = "root"; //sc.nextLine(); // Most likely ''
+            String dbPass = ""; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -41,7 +41,7 @@ public class App {
 
             // Initialize Services
             AdminService adminService = new AdminService(userDAO);
-            WolfbooksService wolfbooksService = new WolfbooksService(conn);
+//            WolfbooksService wolfbooksService = new WolfbooksService(conn);
 
             // Initialize Controllers
             LandingPageController landingPage = new LandingPageController(adminService);

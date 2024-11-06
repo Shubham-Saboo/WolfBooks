@@ -38,7 +38,8 @@ public class LandingPageController {
                         handleLogin("teaching_assistant");
                         break;
                     case "4": // Student Login
-                        handleLogin("student");
+//                        handleLogin("student");
+                        studentController.start();
                         break;
                     case "5": // Exit
                         System.out.println("Thank you for using WolfBooks. Goodbye!");

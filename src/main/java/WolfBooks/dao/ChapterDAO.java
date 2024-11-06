@@ -105,8 +105,8 @@ public class ChapterDAO {
     private ChapterModel extractChapterFromResultSet(ResultSet rs) throws SQLException {
         ChapterModel chapter = new ChapterModel(
                 rs.getString("chapter_id"),
-                rs.getString("textbook_id"),
                 rs.getString("chapter_title"),
+                rs.getString("textbook_id"),
                 rs.getBoolean("is_hidden"),
                 rs.getString("created_by")
         );

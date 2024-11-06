@@ -6,6 +6,7 @@ import src.main.java.WolfBooks.models.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentService {
@@ -18,6 +19,8 @@ public class StudentService {
     private final CourseDAO courseDAO = new CourseDAO();
     private final EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
     private final ActivityDAO activityDAO = new ActivityDAO();
+    private final TextbookDAO textbookDAO = new TextbookDAO();
+    private final ChapterDAO chapterDAO = new ChapterDAO();
 
 //    public StudentService(UserDAO userDAO, StudentActivityDAO studentActivityDAO,
 //                          StudentGradesDAO studentGradesDAO, SectionDAO sectionDAO,
@@ -63,7 +66,7 @@ public class StudentService {
     }
 
     // TODO Add in a new method to get all student activities
-    public List<StudentActivityModel> viewStudentActivities(String studentId) {
+    public List<StudentActivityModel> getStudentActivities(String studentId) {
         return studentActivityDAO.getStudentActivities(studentId);
     }
 
@@ -72,7 +75,7 @@ public class StudentService {
         return sectionDAO.getSectionById(textbookId, chapterId, sectionId);
     }
 
-    public BlockModel viewBlock(String textbookId, String chapterId, String sectionId, String blockId) {
+    public BlockModel getBlock(String textbookId, String chapterId, String sectionId, String blockId) {
         return blockDAO.findBlock(textbookId, chapterId, sectionId, blockId);
     }
 
@@ -112,11 +115,68 @@ public class StudentService {
     }
 
     public void addStudentActivity(StudentActivityModel studentActivityModel) {
-        studentActivityDAO.addStudentActivity(studentActivityModel);
+        StudentActivityModel returnedActivity = studentActivityDAO.getStudentActivity(studentActivityModel.getStudentId(), studentActivityModel.getCourseId(), studentActivityModel.getTextbookId(), studentActivityModel.getChapterId(), studentActivityModel.getSectionId(), studentActivityModel.getBlockId(), studentActivityModel.getQuestionId(), studentActivityModel.getUniqueActivityId());
+        if (returnedActivity == null) {
+            studentActivityDAO.addStudentActivity(studentActivityModel);
+        }
+        else {
+            returnedActivity.setScore(studentActivityModel.getScore());
+            studentActivityDAO.modifyStudentActivity(returnedActivity);
+        }
     }
 
     public List<QuestionModel> getActivityQuestions(String textbookId, String chapterId, String sectionId, String blockId, String activityId) {
         return questionDAO.getQuestionsByActivity(textbookId, chapterId, sectionId, blockId, activityId);
+    }
+
+    public TextbookModel getTextbookById(String textbookId) {
+        return textbookDAO.getTextbookById(textbookId);
+    }
+
+    public List<ChapterModel> getVisibleChapters(String textbookId) {
+        List<ChapterModel> visibleChapters = chapterDAO.getChaptersByTextbook(textbookId);
+        for (int i = 0; i < visibleChapters.size(); i++) {
+            if (visibleChapters.get(i).isHidden()) {
+                visibleChapters.remove(i);
+                i--;
+            }
+        }
+        return visibleChapters;
+    }
+
+    public List<SectionModel> getVisibleSections(String textbookId, String chapterId) {
+        List<SectionModel> visibleSections = sectionDAO.getSectionsByChapter(textbookId, chapterId);
+        for (int i = 0; i < visibleSections.size(); i++) {
+            if (visibleSections.get(i).isHidden()) {
+                visibleSections.remove(i);
+                i--;
+            }
+        }
+        return visibleSections;
+    }
+
+    public List<BlockModel> getVisibleBlocks(String textbookId, String chapterId, String sectionId) {
+        List<BlockModel> visibleBlocks = blockDAO.getBlocksBySection(textbookId, chapterId, sectionId);
+        for (int i = 0; i < visibleBlocks.size(); i++) {
+            if (visibleBlocks.get(i).isHidden()) {
+                visibleBlocks.remove(i);
+                i--;
+            }
+        }
+        return visibleBlocks;
+    }
+
+    public SectionModel getSectionById(String textbookId, String chapterId, String sectionId) {
+        return sectionDAO.getSectionById(textbookId, chapterId, sectionId);
+    }
+
+    public List<CourseModel> getStudentCourses(UserModel student) {
+        List<EnrollmentModel> enrollments = enrollmentDAO.getStudentEnrollments(student);
+        List<CourseModel> courses = new ArrayList<>();
+        for (EnrollmentModel enrollment : enrollments) {
+            courses.add(courseDAO.getCourseById(enrollment.getCourseId()));
+        }
+        return courses;
     }
 
     // Helper Methods
