@@ -79,18 +79,18 @@ public class StudentService {
         return blockDAO.findBlock(textbookId, chapterId, sectionId, blockId);
     }
 
-    public boolean answerQuestion(String courseId, String textbookId, String chapterId, String sectionId,
-                                  String blockId, String activityId, String questionId,
-                                  String studentId, String answer) {
-        QuestionModel questionModel = questionDAO.getQuestionById(textbookId, chapterId, sectionId, blockId, activityId, questionId);
-        if (questionModel == null) {
-            return false;
-        }
-        int score = answer.equals(questionModel.getCorrectAnswer()) ? 1 : 0;
-        return studentActivityDAO.addStudentActivity(
-                new StudentActivityModel(studentId, courseId, textbookId, chapterId, sectionId, blockId,
-                        questionId, questionModel.getActivityId(), score, LocalDateTime.now().toString()));
-    }
+//    public boolean answerQuestion(String courseId, String textbookId, String chapterId, String sectionId,
+//                                  String blockId, String activityId, String questionId,
+//                                  String studentId, String answer) {
+//        QuestionModel questionModel = questionDAO.getQuestionById(textbookId, chapterId, sectionId, blockId, activityId, questionId);
+//        if (questionModel == null) {
+//            return false;
+//        }
+//        int score = answer.equals(questionModel.getCorrectAnswer()) ? 1 : 0;
+//        return studentActivityDAO.addStudentActivity(
+//                new StudentActivityModel(studentId, courseId, textbookId, chapterId, sectionId, blockId,
+//                        questionId, questionModel.getActivityId(), score, LocalDateTime.now().toString()));
+//    }
 
     public boolean enrollStudent(String firstName, String lastName, String email, String courseToken) {
         UserModel student = userDAO.findByEmailAndRole(email, "student");
@@ -114,13 +114,13 @@ public class StudentService {
         return activityDAO.getActivityById(textbookId, chapterId, sectionId, blockId, activityId);
     }
 
-    public void addStudentActivity(StudentActivityModel studentActivityModel) {
-        StudentActivityModel returnedActivity = studentActivityDAO.getStudentActivity(studentActivityModel.getStudentId(), studentActivityModel.getCourseId(), studentActivityModel.getTextbookId(), studentActivityModel.getChapterId(), studentActivityModel.getSectionId(), studentActivityModel.getBlockId(), studentActivityModel.getQuestionId(), studentActivityModel.getUniqueActivityId());
+    public void addStudentActivity(StudentActivityModel newActivity) {
+        StudentActivityModel returnedActivity = studentActivityDAO.getStudentActivity(newActivity.getStudentId(), newActivity.getCourseId(), newActivity.getTextbookId(), newActivity.getChapterId(), newActivity.getSectionId(), newActivity.getBlockId(), newActivity.getQuestionId(), newActivity.getUniqueActivityId());
         if (returnedActivity == null) {
-            studentActivityDAO.addStudentActivity(studentActivityModel);
+            studentActivityDAO.addStudentActivity(newActivity);
         }
         else {
-            returnedActivity.setScore(studentActivityModel.getScore());
+            returnedActivity.setScore(newActivity.getScore());
             studentActivityDAO.modifyStudentActivity(returnedActivity);
         }
     }

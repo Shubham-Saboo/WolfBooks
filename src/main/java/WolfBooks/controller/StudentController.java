@@ -1,10 +1,10 @@
 package src.main.java.WolfBooks.controller;
 
-import org.w3c.dom.Text;
 import src.main.java.WolfBooks.models.*;
 import src.main.java.WolfBooks.services.StudentService;
 
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,25 +12,14 @@ import java.util.Scanner;
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
-    private final SimpleDateFormat dateFormat;
 
     UserModel student;
-    String courseId;
     List<CourseModel> courses;
     List<TextbookModel> textbooks;
-
-    List<ChapterModel> visibleChapters;
-    List<SectionModel> visibleSections;
-    List<BlockModel> visibleBlocks;
 
     public StudentController() {
         this.studentService = new StudentService();
         this.scanner = new Scanner(System.in);
-        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        // TODO Add a way to get all courses a student is in and the names of the textbook.
-        // First, get all of the courses of the currently logged in student. Do this after they are logged in.
-        // After getting the courses, find the associated textbooks.
     }
 
     public void start() {
@@ -51,9 +40,8 @@ public class StudentController {
                         break;
                     case 2:
                         if (signInStudent()) {
-                            // populateCoursesAndTextbooks();
                             populateCourses();
-                            System.out.println("\nWelcome back" + student.getFirstName() + "!");
+                            System.out.println("\nWelcome back " + student.getFirstName() + "!");
                             viewLanding();
                         } else {
                             System.out.println("Invalid credentials!");
@@ -81,19 +69,13 @@ public class StudentController {
             int option = this.scanner.nextInt();
             switch (option) {
                 case 1:
-                    System.out.println("Enter in the course number: ");
+                    System.out.print("Enter in the course number: ");
                     int courseNumber = scanner.nextInt();
-                    System.out.println("Enter in the chapter id: ");
+                    System.out.print("Enter in the chapter id: ");
                     int chapterNumber = scanner.nextInt();
-                    System.out.println("Enter in the section id: ");
+                    System.out.print("Enter in the section id: ");
                     int sectionNumber = scanner.nextInt();
-                    if (courseNumber < 1 || courseNumber > courses.size() ||
-                            chapterNumber < 1 || chapterNumber > visibleChapters.size() + 1 ||
-                            sectionNumber < 1 || sectionNumber > visibleSections.size() + 1) {
-                        break;
-                    } else {
-                        viewSection(courseNumber, chapterNumber, sectionNumber);
-                    }
+                    viewSection(courseNumber, chapterNumber, sectionNumber);
                     break;
                 case 2:
                     viewParticipationPoints();
@@ -107,21 +89,23 @@ public class StudentController {
     }
 
     public void viewSection(int courseNumber, int chapterNumber, int sectionNumber) {
+        // Check the course
+        if (courseNumber < 1 || courseNumber > courses.size() + 1) return;
         CourseModel course = courses.get(courseNumber - 1);
         String textbookId = course.getTextbookId();
-        List<ChapterModel> chapters = studentService.getVisibleChapters(textbookId);
-        String chapterId = chapters.get(chapterNumber - 1).getChapterId();
-        List<SectionModel> sections = studentService.getVisibleSections(textbookId, chapterId);
-        String sectionId = sections.get(sectionNumber - 1).getSectionId();
-        List<BlockModel> blocks = studentService.getVisibleBlocks(textbookId, chapterId, sectionId);
 
-//        String placeHolder = chapterNumber < 10 ? "0" : "";
-//        String chapterId = "chap" + placeHolder + chapterNumber;
-//        placeHolder = sectionNumber < 10 ? "0" : "";
-//        String sectionId = "Sec" + placeHolder + sectionNumber;
-//        System.out.println(courseNumber);
-//        System.out.println(chapterId);
-//        System.out.println(sectionId);
+        // Check and get chapters
+        List<ChapterModel> chapters = studentService.getVisibleChapters(textbookId);
+        if (chapterNumber < 1 || chapterNumber > chapters.size() + 1) return;
+        String chapterId = chapters.get(chapterNumber - 1).getChapterId();
+
+        // Check and get sections
+        List<SectionModel> sections = studentService.getVisibleSections(textbookId, chapterId);
+        if (sectionNumber < 1 || sectionNumber > sections.size() + 1) return;
+        String sectionId = sections.get(sectionNumber - 1).getSectionId();
+
+        // Get the blocks
+        List<BlockModel> blocks = studentService.getVisibleBlocks(textbookId, chapterId, sectionId);
         while (true) {
             System.out.println("\n=== View Section ===");
             System.out.println("1. View block");
@@ -130,12 +114,7 @@ public class StudentController {
             int option = this.scanner.nextInt();
             switch (option) {
                 case 1:
-//                    if (courseNumber < 1 || courseNumber > courses.size() + 1 ||
-//                            chapterId.isEmpty() || sectionId.isEmpty()) {
-//                        System.out.println("Invalid input.");
-//                        break;
-//                    }
-                    if (viewBlock(courseNumber, chapterId, sectionId) == 1) {
+                    if (viewBlock(course, blocks) == 1) {
                         return;
                     };
                     break;
@@ -147,23 +126,26 @@ public class StudentController {
         }
     }
 
-    public int viewBlock(int courseNumber, String chapterId, String sectionId) {
-        CourseModel course = courses.get(courseNumber - 1);
-        TextbookModel textbook = studentService.getTextbookById(course.getTextbookId());
-        int blockId = 0;
+    public int viewBlock(CourseModel course, List<BlockModel> blocks) {
         System.out.println("\n=== View Block ===");
+        int blockId = 0;
+        BlockModel block = blocks.get(blockId);
+        printBlock(course, block);
+        blockId++;
         while (true) {
+            if (blockId >= blocks.size()) {
+                System.out.println("There are no more blocks left in the section!\nGoing back to view section.");
+                return 0;
+            }
             System.out.println("1. Next/Submit");
             System.out.println("2. Go back");
             System.out.print("Choose an option (1-2): ");
             int option = this.scanner.nextInt();
             switch (option) {
                 case 1:
-                    blockId += 1;
-                    String placeHolder = blockId < 10 ? "0" : "";
-                    String blockString = "Block" + placeHolder + blockId;
-                    BlockModel block = studentService.getBlock(textbook.getTextbookID(), chapterId, sectionId, blockString);
+                    block = blocks.get(blockId);
                     printBlock(course, block);
+                    blockId++;
                     break;
                 case 2:
                     return 1;
@@ -173,26 +155,18 @@ public class StudentController {
         }
     }
 
-//    private void populateCoursesAndTextbooks() {
-//        textbooks = new ArrayList<>();
-//        courses = studentService.getStudentCourses(student);
-//        for (CourseModel course : courses) {
-//            textbooks.add(studentService.getTextbookById(course.getTextbookId()));
-//        }
-//    }
-
     private void populateCourses() {
         courses = studentService.getStudentCourses(student);
     }
 
     public boolean handleEnrollment() {
-        System.out.println("Enter in first name:");
+        System.out.print("Enter in first name: ");
         String firstName = this.scanner.next();
-        System.out.println("Enter in last name:");
+        System.out.print("Enter in last name: ");
         String lastName = this.scanner.next();
-        System.out.println("Enter in your email:");
+        System.out.print("Enter in your email: ");
         String email = this.scanner.next();
-        System.out.println("Enter in the course token:");
+        System.out.print("Enter in the course token: ");
         String courseToken = this.scanner.next();
 
         if (!studentService.enrollStudent(firstName, lastName, email, courseToken)) {
@@ -204,9 +178,9 @@ public class StudentController {
 
     public boolean signInStudent() {
         System.out.println("\n=== Student Sign-in ===");
-        System.out.println("Enter your username:");
+        System.out.print("Enter your username: ");
         String userId = scanner.next();
-        System.out.println("Enter your password:");
+        System.out.print("Enter your password: ");
         String password = scanner.next();
         student = studentService.authenticateUser(userId, password, "student");
         return student != null;
@@ -255,14 +229,14 @@ public class StudentController {
             int questionNumber = 0;
             for (QuestionModel question : questions) {
                 questionNumber += 1;
-                System.out.println("Question: " + questionNumber);
-                System.out.println(question.getQuestionText());
-                System.out.println("Question choices:");
-                System.out.println("Answer 1: " + question.getAnswerOne());
-                System.out.println("Answer 2: " + question.getAnswerTwo());
-                System.out.println("Answer 3: " + question.getAnswerThree());
-                System.out.println("Answer 4: " + question.getAnswerFour());
-                System.out.println("Enter in your answer (1-4):");
+                System.out.println("(Q" + questionNumber + ") " + question.getQuestionText() + "\n");
+//                System.out.println(question.getQuestionText());
+//                System.out.println("Question choices:");
+                System.out.println("1. " + question.getAnswerOne());
+                System.out.println("2. " + question.getAnswerTwo());
+                System.out.println("3. " + question.getAnswerThree());
+                System.out.println("4. " + question.getAnswerFour());
+                System.out.print("Enter in your answer (1-4): ");
                 int answer = 0;
                 int score = 1;
                 while (true) {
@@ -272,19 +246,34 @@ public class StudentController {
                         continue;
                     }
                     if (answer != Integer.parseInt(question.getCorrectAnswer())) {
-                        System.out.println("Incorrect answer.\nAnswer explanation: ");
+                        System.out.println("Incorrect answer. Here is why: ");
                         if (answer == 1) System.out.println(question.getExplanationOne());
                         if (answer == 2) System.out.println(question.getExplanationTwo());
                         if (answer == 3) System.out.println(question.getExplanationThree());
                         if (answer == 4) System.out.println(question.getExplanationFour());
                         score = 0;
                     }
+                    System.out.println();
                     break;
                 }
+                LocalDateTime local = LocalDateTime.now();
+                Timestamp sqlTimestamp = Timestamp.valueOf(local);
 
                 studentService.addStudentActivity(new StudentActivityModel(student.getUserId(), course.getCourseId(), block.getTextbookId(), block.getChapterId(),
-                        block.getSectionId(), block.getBlockId(), question.getQuestionId(), block.getContent(), score, dateFormat.toString()));
+                        block.getSectionId(), block.getBlockId(), question.getQuestionId(), block.getContent(), score, sqlTimestamp));
+
+
+                System.out.println("1. Next question");
+                System.out.println("2. Leave activity");
+                int option = scanner.nextInt();
+                while (option < 1 || option > 2) {
+                    System.out.println("Invalid option!");
+                    option = scanner.nextInt();
+                }
+                if (option == 2) return;
             }
+//            studentService.addStudentActivity(new StudentActivityModel(student.getUserId(), course.getCourseId(), block.getTextbookId(), block.getChapterId(),
+//                        block.getSectionId(), block.getBlockId(), question.getQuestionId(), block.getContent(), score, sqlTimestamp));
         }
     }
 

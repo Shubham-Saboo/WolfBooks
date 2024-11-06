@@ -170,16 +170,16 @@ public class QuestionDAO {
                 rs.getString("block_id"),
                 rs.getString("activity_id"),
                 rs.getString("question_id"),
-                rs.getString("question "),
-                rs.getString("explanation_one "),
-                rs.getString("explanation_two "),
-                rs.getString("explanation_three "),
-                rs.getString("explanation_four "),
+                rs.getString("question"),
+                rs.getString("explanation_one"),
+                rs.getString("explanation_two"),
+                rs.getString("explanation_three"),
+                rs.getString("explanation_four"),
                 rs.getString("answer_one"),
                 rs.getString("answer_two"),
                 rs.getString("answer_three"),
-                rs.getString("answer_three"),
-                rs.getString("correct_answer")
+                rs.getString("answer_four"),
+                rs.getString("answer_correct")
         );
     }
 }
