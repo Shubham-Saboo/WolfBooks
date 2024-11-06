@@ -454,7 +454,8 @@ public class TeachingAssistantController {
         System.out.println("3. Hide Section");
         System.out.print("4. Add new block ");
         System.out.println("5. Modify exsiting block");
-        System.out.println("6. Go Back");
+        System.out.print("6. Delete Block");
+        System.out.println("7. Go Back");
         System.out.print("Enter your choice: ");
 
         String choice = scanner.nextLine();
@@ -472,9 +473,12 @@ public class TeachingAssistantController {
                 handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "5":
-                handleModifyBlock(textbookId, chapterId,sectionId);
+                handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "6":
+                deleteContentBlock(textbookId,chapterId,sectionId);
+                break;
+            case "7":
                 return;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -547,7 +551,7 @@ public class TeachingAssistantController {
                 modifyContentBlock(blockId, textbookId, chapterId, sectionId);
                 break;
             case "2":
-                deleteContentBlock(blockId);
+                deleteContentBlock(textbookId,chapterId,sectionId);
                 break;
             case "3":
                 hideContentBlock(blockId, textbookId, chapterId, sectionId);
@@ -572,9 +576,11 @@ public class TeachingAssistantController {
         }
     }
 
-    private void deleteContentBlock(String blockId) {
-        if (taService.deleteBlock(blockId, currentTA.getUserId())) {
-            System.out.println("Content block deleted successfully!");
+    private void deleteContentBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.print("Enter Content Block ID that you want to delete: ");
+        String blockId = scanner.nextLine();
+        if (taService.deleteBlock(textbookId, chapterId, sectionId, blockId, currentTA.getUserId())) {
+            System.out.println("Content block and related activities/questions deleted successfully!");
         } else {
             System.out.println("Failed to delete content block.");
         }
