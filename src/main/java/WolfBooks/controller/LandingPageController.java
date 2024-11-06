@@ -1,13 +1,17 @@
 package src.main.java.WolfBooks.controller;
-
+import src.main.java.WolfBooks.services.TeachingAssistantService;
 import src.main.java.WolfBooks.services.AdminService;
 import src.main.java.WolfBooks.models.UserModel;
+import src.main.java.WolfBooks.models.TeachingAssistantModel;
 import java.util.Scanner;
+
 
 public class LandingPageController {
     private final AdminService adminService;
     private final Scanner scanner;
     private final AdminController adminController;
+private final TeachingAssistantService taService;
+private final TeachingAssistantController taController;
     // TODO: Add other controllers when implemented
     // private final FacultyController facultyController;
     // private final TAController taController;
@@ -80,7 +84,17 @@ public class LandingPageController {
                         System.out.println("Faculty login successful! (Controller not implemented)");
                         break;
                     case "teaching_assistant":
-                        System.out.println("TA login successful! (Controller not implemented)");
+                        try {
+            TeachingAssistantModel ta = taService.authenticateTA(userId, password);
+            if (ta != null) {
+                taController.start(ta);
+            } else {
+                System.out.println("Login failed. Invalid credentials.");
+            }
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+        }
+                        System.out.println("TA login successful!");
                         break;
                     case "student":
                         System.out.println("Student login successful! (Controller not implemented)");
