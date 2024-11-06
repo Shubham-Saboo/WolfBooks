@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentActivityDAO {
 
@@ -26,7 +28,26 @@ public class StudentActivityDAO {
             stmt.setString(7, questionId);
             stmt.setString(8, uniqueActivityId);
             ResultSet rs = stmt.executeQuery();
+            if (!rs.next()) return null;
             return mapResultSetToSA(rs);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<StudentActivityModel> getStudentActivities(String studentId) {
+        String sqlQuery = "SELECT * FROM studentactivities WHERE student_id = ?";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+            stmt.setString(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+            List<StudentActivityModel> studentActivities = new ArrayList<>();
+            while (rs.next()) {
+                studentActivities.add(mapResultSetToSA(rs));
+            }
+            return studentActivities;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -36,7 +57,7 @@ public class StudentActivityDAO {
     public boolean addStudentActivity(StudentActivityModel studentActivityModel) {
         String sqlQuery = "INSERT INTO studentactivities VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
+            Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setString(1, studentActivityModel.getStudentId());
             stmt.setString(2, studentActivityModel.getCourseId());
@@ -47,7 +68,7 @@ public class StudentActivityDAO {
             stmt.setString(7, studentActivityModel.getQuestionId());
             stmt.setString(8, studentActivityModel.getUniqueActivityId());
             stmt.setInt(9, studentActivityModel.getScore());
-            stmt.setString(10, studentActivityModel.getTimestamp());
+            stmt.setTimestamp(10, studentActivityModel.getTimestamp());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -60,10 +81,10 @@ public class StudentActivityDAO {
                 "WHERE student_id = ? AND course_id = ? AND textbook_id = ? AND chapter_id = ? " +
                 "AND section_id = ? AND block_id = ? AND question_id = ? AND unique_activity_id = ?";
         try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
+            Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sqlQuery);
             stmt.setInt(1, studentActivityModel.getScore());
-            stmt.setString(2, studentActivityModel.getTimestamp());
+            stmt.setTimestamp(2, studentActivityModel.getTimestamp());
             stmt.setString(3, studentActivityModel.getStudentId());
             stmt.setString(4, studentActivityModel.getCourseId());
             stmt.setString(5, studentActivityModel.getTextbookId());
@@ -80,6 +101,7 @@ public class StudentActivityDAO {
     }
 
     private StudentActivityModel mapResultSetToSA(ResultSet rs) throws SQLException {
+        if (rs == null) return null;
         return new StudentActivityModel(
             rs.getString("student_id"),
             rs.getString("course_id"),
@@ -90,7 +112,7 @@ public class StudentActivityDAO {
             rs.getString("question_id"),
             rs.getString("unique_activity_id"),
             rs.getInt("score"),
-            rs.getString("sa_timestamp")
+            rs.getTimestamp("sa_timestamp")
         );
     }
 }

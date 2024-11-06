@@ -107,7 +107,7 @@ public class BlockDAO {
     }
 
     // Find block by section
-    public List<BlockModel> findBlocksBySection(String textbookId, String chapterId, String sectionId) {
+    public List<BlockModel> getBlocksBySection(String textbookId, String chapterId, String sectionId) {
                 String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
         try {
             Connection conn = DatabaseConnection.getInstance().getConnection();

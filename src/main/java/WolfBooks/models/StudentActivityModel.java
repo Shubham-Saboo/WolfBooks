@@ -1,5 +1,7 @@
 package src.main.java.WolfBooks.models;
 
+import java.sql.Timestamp;
+
 public class StudentActivityModel {
     private String studentId;
     private String courseId;
@@ -9,10 +11,10 @@ public class StudentActivityModel {
     private String blockId;
     private String questionId;
     private String uniqueActivityId;
-    private String timestamp;
+    private Timestamp timestamp;
     int score = 0;
 
-    public StudentActivityModel(String studentId, String courseId, String textbookId, String chapterId, String sectionId, String blockId, String questionId, String uniqueActivityId, int score, String timestamp) {
+    public StudentActivityModel(String studentId, String courseId, String textbookId, String chapterId, String sectionId, String blockId, String questionId, String uniqueActivityId, int score, Timestamp timestamp) {
         setStudentId(studentId);
         setCourseId(courseId);
         setTextbookId(textbookId);
@@ -97,11 +99,11 @@ public class StudentActivityModel {
         this.score = score;
     }
 
-    public String getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 }
