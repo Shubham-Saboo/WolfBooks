@@ -18,7 +18,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = "@Qwerty12345"; //sc.nextLine(); // Most likely ''
+            String dbPass = "root"; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -38,6 +38,7 @@ public class App {
             SectionDAO sectionDAO = new SectionDAO();
             BlockDAO blockDAO = new BlockDAO();
             TeachingAssistantDAO teachingAssistantDAO = new TeachingAssistantDAO();
+            QueryDAO QueryDAO = new QueryDAO();
             
 
             // TODO: Initialize other DAOs when implemented
