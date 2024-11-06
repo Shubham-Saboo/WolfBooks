@@ -8,6 +8,7 @@ import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
 import src.main.java.WolfBooks.controller.LandingPageController;
 import src.main.java.WolfBooks.services.AdminService;
+import src.main.java.WolfBooks.services.TeachingAssistantService;
 
 public class App {
     public static void main(String[] args) {
@@ -17,7 +18,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = "root"; //sc.nextLine(); // Most likely ''
+            String dbPass = "@Qwerty12345"; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -47,12 +48,14 @@ public class App {
             TeachingAssistantService taService = new TeachingAssistantService(teachingAssistantDAO);
 
             // Initialize Controllers
-            LandingPageController landingPage = new LandingPageController(adminService);
+            LandingPageController landingPage = new LandingPageController(adminService,taService);
 
             // Start the application
             System.out.println("Starting WolfBooks Application...");
             landingPage.start();
+
             conn.close();
+
 
 
 

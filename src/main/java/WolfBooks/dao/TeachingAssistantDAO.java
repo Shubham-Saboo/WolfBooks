@@ -10,9 +10,7 @@ import java.util.List;
 public class TeachingAssistantDAO {
     private Connection conn;
 
-    public TeachingAssistantDAO() throws SQLException {
-        this.conn = DatabaseConnection.getConnection();
-    }
+
 
     // ==================== Authentication Operations ====================
     public TeachingAssistantModel authenticateTA(String userId, String password) throws SQLException {
@@ -20,7 +18,8 @@ public class TeachingAssistantDAO {
                 "JOIN TeachingAssistants ta ON u.user_id = ta.user_id " +
                 "WHERE u.user_id = ? AND u.password = ? AND u.user_role = 'teaching_assistant'";
         try (
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)){
             stmt.setString(1, userId);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -34,7 +33,10 @@ public class TeachingAssistantDAO {
 
     public boolean updatePassword(String userId, String currentPassword, String newPassword) throws SQLException {
         String query = "UPDATE Users SET password = ? WHERE user_id = ? AND password = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+
+
+                PreparedStatement stmt = conn.prepareStatement(query)){
             stmt.setString(1, newPassword);
             stmt.setString(2, userId);
             stmt.setString(3, currentPassword);
@@ -44,7 +46,10 @@ public class TeachingAssistantDAO {
 
     public boolean checkFirstLogin(String userId) throws SQLException {
         String query = "SELECT first_login FROM Users WHERE user_id = ? AND user_role = 'teaching_assistant'";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+
+
+                PreparedStatement stmt = conn.prepareStatement(query)){
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -58,7 +63,8 @@ public class TeachingAssistantDAO {
     public List<String> getAssignedCourses(String taId) throws SQLException {
         List<String> courses = new ArrayList<>();
         String query = "SELECT course_id FROM TeachingAssistants WHERE user_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, taId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -70,7 +76,8 @@ public class TeachingAssistantDAO {
 
     public boolean validateTACourseAccess(String taId, String courseId) throws SQLException {
         String query = "SELECT 1 FROM TeachingAssistants WHERE user_id = ? AND course_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, taId);
             stmt.setString(2, courseId);
             ResultSet rs = stmt.executeQuery();
@@ -81,7 +88,8 @@ public class TeachingAssistantDAO {
     public List<UserModel> viewStudentsInCourse(String courseId) throws SQLException {
         List<UserModel> students = new ArrayList<>();
         String query = "SELECT u.* FROM Users u JOIN Enrollments e ON u.user_id = e.user_id WHERE e.course_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, courseId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -94,7 +102,8 @@ public class TeachingAssistantDAO {
     // ==================== Chapter Management Operations ====================
     public boolean addChapter(String textbookId, String chapterId, String chapterTitle, String createdBy) throws SQLException {
         String query = "INSERT INTO Chapters (textbook_id, chapter_id, chapter_title, created_by) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, textbookId);
             stmt.setString(2, chapterId);
             stmt.setString(3, chapterTitle);
@@ -106,7 +115,8 @@ public class TeachingAssistantDAO {
     public boolean hideChapter(String textbookId, String chapterId, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Chapters SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, textbookId);
                 stmt.setString(2, chapterId);
                 return stmt.executeUpdate() > 0;
@@ -118,7 +128,8 @@ public class TeachingAssistantDAO {
     public boolean modifyChapter(String chapterId, String newTitle, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Chapters SET chapter_title = ? WHERE chapter_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, newTitle);
                 stmt.setString(2, chapterId);
                 return stmt.executeUpdate() > 0;
@@ -130,7 +141,8 @@ public class TeachingAssistantDAO {
     // ==================== Section Management Operations ====================
     public boolean addSection(String textbookId, String chapterId, String sectionId, String sectionTitle, String createdBy) throws SQLException {
         String query = "INSERT INTO Sections (textbook_id, chapter_id, section_id, section_title, created_by) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, textbookId);
             stmt.setString(2, chapterId);
             stmt.setString(3, sectionId);
@@ -143,7 +155,8 @@ public class TeachingAssistantDAO {
     public boolean hideSection(String textbookId, String chapterId, String sectionId, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Sections SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, textbookId);
                 stmt.setString(2, chapterId);
                 stmt.setString(3, sectionId);
@@ -156,7 +169,8 @@ public class TeachingAssistantDAO {
     public boolean modifySection(String sectionId, String newTitle, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Sections SET section_title = ? WHERE section_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, newTitle);
                 stmt.setString(2, sectionId);
                 return stmt.executeUpdate() > 0;
@@ -168,7 +182,8 @@ public class TeachingAssistantDAO {
     // ==================== Content Block Operations ====================
     public boolean addContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String contentType, String content, String createdBy) throws SQLException {
         String query = "INSERT INTO Blocks (textbook_id, chapter_id, section_id, block_id, content_type, content, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, textbookId);
             stmt.setString(2, chapterId);
             stmt.setString(3, sectionId);
@@ -183,7 +198,8 @@ public class TeachingAssistantDAO {
     public boolean hideContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Blocks SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, textbookId);
                 stmt.setString(2, chapterId);
                 stmt.setString(3, sectionId);
@@ -197,7 +213,8 @@ public class TeachingAssistantDAO {
     public boolean modifyContentBlock(String blockId, String newContent, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Blocks SET content = ? WHERE block_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, newContent);
                 stmt.setString(2, blockId);
                 return stmt.executeUpdate() > 0;
@@ -210,7 +227,8 @@ public class TeachingAssistantDAO {
     public boolean modifyActivity(String activityId, String newDetails, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
             String query = "UPDATE Activities SET details = ? WHERE activity_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, newDetails);
                 stmt.setString(2, activityId);
                 return stmt.executeUpdate() > 0;
@@ -248,7 +266,8 @@ public class TeachingAssistantDAO {
 
     private boolean isTAAssignedToCourse(String taId, String courseId) throws SQLException {
         String query = "SELECT 1 FROM TeachingAssistants WHERE user_id = ? AND course_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, taId);
             stmt.setString(2, courseId);
             ResultSet rs = stmt.executeQuery();
@@ -260,7 +279,8 @@ public class TeachingAssistantDAO {
 public boolean deleteChapter(String chapterId, String taId) throws SQLException {
     if (validateTAOwnership(taId, chapterId, "Chapters")) {
         String query = "DELETE FROM Chapters WHERE chapter_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, chapterId);
             return stmt.executeUpdate() > 0;
         }
@@ -271,7 +291,8 @@ public boolean deleteChapter(String chapterId, String taId) throws SQLException 
 public boolean deleteSection(String sectionId, String taId) throws SQLException {
     if (validateTAOwnership(taId, sectionId, "Sections")) {
         String query = "DELETE FROM Sections WHERE section_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, sectionId);
             return stmt.executeUpdate() > 0;
         }
@@ -282,7 +303,8 @@ public boolean deleteSection(String sectionId, String taId) throws SQLException 
 public boolean deleteContentBlock(String blockId, String taId) throws SQLException {
     if (validateTAOwnership(taId, blockId, "Blocks")) {
         String query = "DELETE FROM Blocks WHERE block_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, blockId);
             return stmt.executeUpdate() > 0;
         }
@@ -293,7 +315,8 @@ public boolean deleteContentBlock(String blockId, String taId) throws SQLExcepti
 // ==================== Validation Helpers ====================
 private boolean validateTAOwnership(String taId, String contentId, String tableName) throws SQLException {
     String query = "SELECT created_by FROM " + tableName + " WHERE id = ?";
-    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
         stmt.setString(1, contentId);
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
@@ -313,7 +336,8 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
         WHERE ta.user_id = ?;
     """;
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, taId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -334,7 +358,8 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
         );
     """;
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, courseId);
             stmt.setString(2, taId);
             ResultSet rs = stmt.executeQuery();
@@ -353,7 +378,8 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
     // ==================== Other Helper Methods ====================
 private boolean validateAccess(String userId, String contentId, String table) throws SQLException {
     String query = "SELECT 1 FROM " + table + " WHERE created_by = ? AND id = ?";
-    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
         stmt.setString(1, userId);
         stmt.setString(2, contentId);
         ResultSet rs = stmt.executeQuery();
@@ -362,4 +388,6 @@ private boolean validateAccess(String userId, String contentId, String table) th
 }
 
 // ==================== Connection Management ====================
+
+
 }

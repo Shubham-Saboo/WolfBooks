@@ -1,5 +1,6 @@
 package src.main.java.WolfBooks.controller;
 
+import src.main.java.WolfBooks.dao.BlockDAO;
 import src.main.java.WolfBooks.models.TeachingAssistantModel;
 import src.main.java.WolfBooks.models.UserModel;
 import src.main.java.WolfBooks.services.TeachingAssistantService;
@@ -196,28 +197,130 @@ public class TeachingAssistantController {
         String choice = scanner.nextLine();
 
         if ("1".equals(choice)) {
-            handleAddNewContentBlock(textbookId, chapterId, sectionId);
+            handleAddNewBlock(textbookId, chapterId, sectionId);
         }
     }
 
     // ==================== Content Block Management ====================
-    private void handleAddNewContentBlock(String textbookId, String chapterId, String sectionId) {
-        System.out.println("\n=== Add New Content Block ===");
-        System.out.print("Enter Block ID: ");
-        String blockId = scanner.nextLine();
 
-        System.out.print("Enter Content Type (text/picture/activity): ");
-        String contentType = scanner.nextLine();
+    private void handleAddNewBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.println("\n=== Add New Block ===");
+        try {
+            // Step 1: Get Block details from admin input
+            System.out.print("Enter Content Block ID: ");
+            String blockId = scanner.nextLine();
 
+            // Step 2: Display menu options for adding text, picture, or activity
+            System.out.println("\n1. Add Text");
+            System.out.println("2. Add Picture");
+            System.out.println("3. Add Activity");
+            System.out.println("4. Go Back");
+            System.out.println("5. Landing Page");
+            System.out.print("Enter your choice (1-5): ");
+            String choice = scanner.nextLine();
 
+            switch (choice) {
+                case "1":
+                    // Option 1: Redirect to add text
+                    handleAddText(textbookId,chapterId, sectionId, blockId);
+                    break;
+                case "2":
+                    // Option 2: Redirect to add picture
+                    handleAddPicture(textbookId,chapterId, sectionId, blockId);
+                    break;
+                case "3":
+                    // Option 3: Redirect to add activity
+                    handleAddActivity(textbookId,chapterId, sectionId, blockId);
+                    break;
+                case "4":
+                    // Option 4: Go back without saving
+                    return;
+                case "5":
+                    // Option 5: Return to Admin Landing Page
+                    showTAMenu();
+                    break;
+                default:
+                    // Handle invalid input
+                    System.out.println("Invalid choice. Returning to TA Landing Page.");
+                    showTAMenu();
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
 
-        System.out.print("Enter Content: ");
-        String content = scanner.nextLine();
+    private void handleAddText(String textbookId, String chapterId, String sectionId, String blockId) {
+        System.out.println("\n=== Add Text ===");
+        try {
+            // Step 1: Get Text details from admin input
+            System.out.print("Enter Text Content: ");
+            String textContent = scanner.nextLine();
 
-        if (taService.addBlock(textbookId, chapterId, sectionId, blockId, contentType, content, currentTA.getUserId())) {
-            System.out.println("Content block added successfully!");
-        } else {
-            System.out.println("Failed to add content block.");
+            // Step 2: Display menu options for saving or going back
+            System.out.println("\n1. Save Text");
+            System.out.println("2. Go Back");
+            System.out.println("3. Landing Page");
+            System.out.print("Enter your choice (1-3): ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Save text in the database using AdminService
+                    if (TeachingAssistantService.createBlock(sectionId, textbookId, blockId, chapterId, "text", textContent, false, currentTA.getUserId())) {
+                        System.out.println("Text added successfully!");
+                    } else {
+                        System.out.println("Failed to add text.");
+                    }
+                    break;
+                case "2":
+                    return; // Go back without saving
+                case "3":
+                    showTAMenu(); // Return to landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleAddPicture(String textbookId, String chapterId, String sectionId, String blockId) {
+        System.out.println("\n=== Add Picture ===");
+        try {
+            // Step 1: Get Picture details from admin input
+            System.out.print("Enter Picture URL or Path: ");
+            String pictureUrl = scanner.nextLine();
+
+            // Step 2: Display menu options for saving or going back
+            System.out.println("\n1. Save Picture");
+            System.out.println("2. Go Back");
+            System.out.println("3. Landing Page");
+            System.out.print("Enter your choice (1-3): ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Save picture in the database using AdminService
+                    if (TeachingAssistantService.createBlock(sectionId, textbookId, blockId, chapterId, "picture", pictureUrl, false, currentTA.getUserId() )) {
+                        System.out.println("Picture added successfully!");
+                    } else {
+                        System.out.println("Failed to add picture.");
+                    }
+                    break;
+                case "2":
+                    return; // Go back without saving
+                case "3":
+                    showTAMenu(); // Return to landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -258,6 +361,59 @@ public class TeachingAssistantController {
                 return;
             default:
                 System.out.println("Invalid choice. Please try again.");
+        }
+    }
+
+
+
+    private void handleModifyBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.println("\n=== Modify Content Block ===");
+        try {
+            // Step 1: Get Block ID from the user
+            System.out.print("Enter Content Block ID: ");
+            String blockId = scanner.nextLine();
+
+            // Step 2: Check if the block exists in the database using BlockDAO
+            if (BlockDAO.findBlock(textbookId, chapterId, sectionId, blockId) == null) {
+                System.out.println("Error: Block not found.");
+                return; // Exit the method if block doesn't exist
+            }
+
+            // Step 3: Display options for modifying the block
+            System.out.println("1. Add Text");
+            System.out.println("2. Add Picture");
+            System.out.println("3. Add New Activity");
+            System.out.println("4. Go Back");
+            System.out.println("5. Landing Page");
+            System.out.print("Enter your choice (1-5): ");
+            String choice = scanner.nextLine();
+
+            // Step 4: Handle user choice
+            switch (choice) {
+                case "1":
+                    // Option 1: Redirect to add text
+                    handleAddText(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "2":
+                    // Option 2: Redirect to add picture
+                    handleAddPicture(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "3":
+                    // Option 3: Redirect to add activity
+                    handleAddActivity(textbookId, chapterId, sectionId, blockId);
+                    break;
+                case "4":
+                    return; // Go back to the previous menu
+                case "5":
+                    showTAMenu(); // Go back to the admin landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    handleModifyBlock(textbookId, chapterId, sectionId); // Recursive call for invalid input
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -313,10 +469,10 @@ public class TeachingAssistantController {
                 hideSection(sectionId, textbookId, chapterId);
                 break;
             case "4":
-                handleAddNewContentBlock(textbookId, chapterId,sectionId);
+                handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "5":
-                handleModifyContentBlock(textbookId, chapterId,sectionId);
+                handleModifyBlock(textbookId, chapterId,sectionId);
                 break;
             case "6":
                 return;
@@ -431,5 +587,119 @@ public class TeachingAssistantController {
             System.out.println("Failed to hide content block.");
         }
     }
+
+
+    private void handleAddActivity(String textbookId, String chapterId, String sectionId, String blockId) {
+        System.out.println("\n=== Add Activity ===");
+        try {
+            // Step 1: Get Activity details from admin input
+            System.out.print("Enter Activity ID: ");
+            String activityId = scanner.nextLine();
+
+            // Step 2: Display menu options for saving or going back
+            System.out.println("\n1. Save Activity");
+            System.out.println("2. Go Back");
+            System.out.println("3. Landing Page");
+            System.out.print("Enter your choice (1-3): ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Save activity in the database using AdminService
+                    if (TeachingAssistantService.createBlock(sectionId, textbookId, blockId, chapterId, "activity", activityId, false,  currentTA.getUserId())) {
+                        TeachingAssistantService.createActivity(textbookId, chapterId, sectionId, blockId, activityId, false, currentTA.getUserId());
+                        System.out.println("Activity added successfully!");
+                        handleAddQuestion(textbookId, chapterId, sectionId, blockId, activityId); // Redirect to add questions if needed
+                    } else {
+                        System.out.println("Failed to add activity.");
+                    }
+                    break;
+                case "2":
+                    return; // Go back without saving
+                case "3":
+                    showTAMenu(); // Return to landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+    private void handleAddQuestion(String textbookId,String chapterId,String sectionId,String blockId,String activityId) {
+        System.out.println("\n=== Add New Question ===");
+        try {
+            // Step 1: Get Question details from admin input
+            System.out.print("Enter Question ID: ");
+            String questionId = scanner.nextLine();
+
+            System.out.print("Enter Question Text: ");
+            String questionText = scanner.nextLine();
+
+            // Collect options individually without loops
+            System.out.print("Enter Option 1: ");
+            String optionOne = scanner.nextLine();
+
+            System.out.print("Enter Explanation for Option 1: ");
+            String explanationOne = scanner.nextLine();
+
+            System.out.print("Enter Option 2: ");
+            String optionTwo = scanner.nextLine();
+
+            System.out.print("Enter Explanation for Option 2: ");
+            String explanationTwo = scanner.nextLine();
+
+            System.out.print("Enter Option 3: ");
+            String optionThree = scanner.nextLine();
+
+            System.out.print("Enter Explanation for Option 3: ");
+            String explanationThree = scanner.nextLine();
+
+            System.out.print("Enter Option 4: ");
+            String optionFour = scanner.nextLine();
+
+            System.out.print("Enter Explanation for Option 4: ");
+            String explanationFour = scanner.nextLine();
+
+            System.out.print("Enter Correct Answer (1/2/3/4): ");
+            String correctAnswer = scanner.nextLine();
+
+
+            // Step 2: Display menu options for saving or going back
+            System.out.println("\n1. Save");
+            System.out.println("2. Cancel");
+            System.out.println("3. Landing Page");
+
+            System.out.print("Enter your choice (1-3): ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Save question in the database using AdminService
+                    if (TeachingAssistantService.addQuestion(textbookId ,chapterId ,sectionId ,blockId ,activityId ,
+                            questionId ,questionText ,explanationOne ,
+                            explanationTwo ,explanationThree ,
+                            explanationFour ,optionOne ,optionTwo ,
+                            optionThree ,optionFour , correctAnswer)) {
+                        System.out.println("Question added successfully!");
+                    } else {
+                        System.out.println("Failed to add question.");
+                    }
+                    break;
+                case "2":
+                    return; // Go back without saving
+                case "3":
+                    showTAMenu(); // Return to landing page
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
 
 }

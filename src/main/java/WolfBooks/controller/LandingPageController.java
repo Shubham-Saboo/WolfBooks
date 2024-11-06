@@ -3,6 +3,7 @@ import src.main.java.WolfBooks.services.TeachingAssistantService;
 import src.main.java.WolfBooks.services.AdminService;
 import src.main.java.WolfBooks.models.UserModel;
 import src.main.java.WolfBooks.models.TeachingAssistantModel;
+
 import java.util.Scanner;
 
 
@@ -10,17 +11,19 @@ public class LandingPageController {
     private final AdminService adminService;
     private final Scanner scanner;
     private final AdminController adminController;
-private final TeachingAssistantService taService;
-private final TeachingAssistantController taController;
+    private final TeachingAssistantService taService;
+    private final TeachingAssistantController taController;
     // TODO: Add other controllers when implemented
     // private final FacultyController facultyController;
     // private final TAController taController;
     // private final StudentController studentController;
 
-    public LandingPageController(AdminService adminService) {
+    public LandingPageController(AdminService adminService,TeachingAssistantService taService ) {
         this.adminService = adminService;
+        this.taService = taService;
         this.scanner = new Scanner(System.in);
         this.adminController = new AdminController(adminService);
+        this.taController = new TeachingAssistantController(taService);
     }
 
     public void start() {
@@ -85,16 +88,16 @@ private final TeachingAssistantController taController;
                         break;
                     case "teaching_assistant":
                         try {
-            TeachingAssistantModel ta = taService.authenticateTA(userId, password);
-            if (ta != null) {
-                taController.start(ta);
-            } else {
-                System.out.println("Login failed. Invalid credentials.");
-            }
-        } catch (Exception e) {
-            System.out.println("Login error: " + e.getMessage());
-        }
-                        System.out.println("TA login successful!");
+                        TeachingAssistantModel ta = taService.authenticateTA(userId, password);
+                        if (ta != null) {
+                            taController.start(ta);
+                        } else {
+                            System.out.println("Login failed. Invalid credentials.");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Login error: " + e.getMessage());
+                    }
+                                    System.out.println("TA login successful!");
                         break;
                     case "student":
                         System.out.println("Student login successful! (Controller not implemented)");
