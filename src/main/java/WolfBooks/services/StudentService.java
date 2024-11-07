@@ -21,6 +21,7 @@ public class StudentService {
     private final ActivityDAO activityDAO = new ActivityDAO();
     private final TextbookDAO textbookDAO = new TextbookDAO();
     private final ChapterDAO chapterDAO = new ChapterDAO();
+    private final NotificationDAO notificationDAO = new NotificationDAO();
 
 //    public StudentService(UserDAO userDAO, StudentActivityDAO studentActivityDAO,
 //                          StudentGradesDAO studentGradesDAO, SectionDAO sectionDAO,
@@ -177,6 +178,19 @@ public class StudentService {
             courses.add(courseDAO.getCourseById(enrollment.getCourseId()));
         }
         return courses;
+    }
+
+    public List<NotificationModel> getUserNotifications(String userId) {
+        List<NotificationModel> notifications = notificationDAO.getNotificationsByUser(userId);
+//        for (int i = 0; i < notifications.size(); i++) {
+//            if (notifications.get(i).) {
+//
+//            }
+//        }
+        for (NotificationModel notification : notifications) {
+            notificationDAO.deleteNotification(userId, notification.getNotificationId());
+        }
+        return notifications;
     }
 
     // Helper Methods

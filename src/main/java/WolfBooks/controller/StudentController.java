@@ -1,5 +1,6 @@
 package src.main.java.WolfBooks.controller;
 
+import src.main.java.WolfBooks.dao.NotificationDAO;
 import src.main.java.WolfBooks.models.*;
 import src.main.java.WolfBooks.services.StudentService;
 
@@ -64,8 +65,9 @@ public class StudentController {
             printTextbooks();
             System.out.println("1. View a section");
             System.out.println("2. View participation activity point");
-            System.out.println("3. Logout");
-            System.out.print("Choose an option (1-3): ");
+            System.out.println("3. View notifications");
+            System.out.println("4. Logout");
+            System.out.print("Choose an option (1-4): ");
             int option = this.scanner.nextInt();
             switch (option) {
                 case 1:
@@ -81,10 +83,35 @@ public class StudentController {
                     viewParticipationPoints();
                     break;
                 case 3:
+                    viewNotifications();
+                    break;
+                case 4:
                     return;
                 default:
                     System.out.println("Invalid option!");
             }
+        }
+    }
+
+    public void viewNotifications() {
+        System.out.println("\n=== Notifications Menu ===");
+        String studentId = student.getUserId();
+        List<NotificationModel> notifications = studentService.getUserNotifications(studentId);
+        if (notifications.isEmpty()) {
+            System.out.println("No notifications found!");
+        }
+        for (int i = 0; i < notifications.size(); i++) {
+            NotificationModel notification = notifications.get(i);
+            System.out.println("Notification #" + (i + 1));
+            System.out.println(notification.getContent());
+            System.out.println();
+        }
+        System.out.println("1. Go back");
+        System.out.print("Choose an option (1): ");
+        int option = this.scanner.nextInt();
+        while (option != 1) {
+            System.out.print("Choose an option (1): ");
+            option = this.scanner.nextInt();
         }
     }
 
