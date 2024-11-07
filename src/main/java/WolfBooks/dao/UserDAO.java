@@ -39,6 +39,11 @@ public class UserDAO {
             stmt.setBoolean(7, user.isFirstLogin());
             return stmt.executeUpdate() > 0;
         }
+        catch (SQLException e) {
+
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean createFacultyAccount(UserModel faculty) throws SQLException {
@@ -54,16 +59,14 @@ public class UserDAO {
         }
 
         Connection conn = null;
-        try {
-            conn = DatabaseConnection.getInstance().getConnection();
-            conn.setAutoCommit(false);
+
+
+            //conn.setAutoCommit(false);
 
             boolean userCreated = createUser(ta);
-            if (!userCreated) {
-                conn.rollback();
-                System.out.println("Rolling back transaction");
-                return false;
-            }
+            conn = DatabaseConnection.getInstance().getConnection();
+
+
 
             String query = "INSERT INTO TeachingAssistants (user_id, course_id, faculty_id) VALUES (?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -71,24 +74,13 @@ public class UserDAO {
                 stmt.setString(2, courseId);
                 stmt.setString(3, facultyId);
                 if (stmt.executeUpdate() <= 0) {
+
                     conn.rollback();
                     return false;
                 }
+                return true;
             }
 
-            conn.commit();
-            return true;
-        } catch (SQLException e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (conn != null) {
-                conn.setAutoCommit(true);
-                conn.close();
-            }
-        }
     }
 
     // ==================== User Lookup Operations ====================
