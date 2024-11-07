@@ -3,15 +3,26 @@ package src.main.java.WolfBooks.services;
 import src.main.java.WolfBooks.dao.TeachingAssistantDAO;
 import src.main.java.WolfBooks.models.TeachingAssistantModel;
 import src.main.java.WolfBooks.models.UserModel;
+import src.main.java.WolfBooks.dao.*;
+import src.main.java.WolfBooks.models.*;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TeachingAssistantService {
     private final TeachingAssistantDAO taDAO;
+    private static final ActivityDAO activityDAO = new ActivityDAO();
+    private static final QuestionDAO questionDAO = new QuestionDAO();
+    private static final BlockDAO blockDAO = new BlockDAO();
 
     public TeachingAssistantService(TeachingAssistantDAO taDAO) {
+
+
+
         this.taDAO = taDAO;
+
     }
 
     // ==================== Authentication ====================
@@ -264,17 +275,12 @@ public class TeachingAssistantService {
         }
     }
 
-    private void validateActivityInput(String activityId) {
-        validateId(activityId, "Activity ID");
-    }
-
-    public List<String> getAssignedTextbooks(String taId) {
-        try {
-            validateId(taId, "TA ID");
-            return taDAO.getAssignedTextbooks(taId);
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to retrieve assigned textbooks: " + e.getMessage());
+    private static boolean validateActivityInput(String activityId) {
+        if (activityId == null || activityId.trim().isEmpty()) {
+            System.out.println("Activity ID cannot be empty.");
+            return false;
         }
+        return true;
     }
 
 
@@ -297,7 +303,134 @@ public class TeachingAssistantService {
     }
 
 
+    public static boolean createBlock(String textbookId, String chapterId, String sectionId,
+                                      String blockId, String contentType,
+                                      String content,
+                                      boolean isHidden,
+                                      String createdBy) {
+        if (!validateBlockInput(blockId, contentType)) {
+            return false;
+        }
+        BlockModel block = new BlockModel(textbookId, chapterId, sectionId, blockId, contentType, content, isHidden, createdBy);
 
+        return blockDAO.createBlock(block);
+
+    }
+
+    public static boolean createActivity(String textbookId, String chapterId, String sectionId, String blockId,
+                                         String activityId, boolean isHidden, String createdBy) {
+        // Validate input
+        if (!validateActivityInput(activityId)) {
+            return false;
+        }
+
+        // Create a new ActivityModel object without activityDescription
+        ActivityModel activity = new ActivityModel(activityId, blockId, sectionId, chapterId, textbookId, isHidden, createdBy); // No activityDescription
+
+        // Call DAO to insert the activity into the database
+        return activityDAO.createActivity(activity);
+    }
+
+    public static boolean addQuestion(String textbookId, String chapterId, String sectionId, String blockId,
+                                      String activityId, String questionId, String questionText,
+                                      String explanationOne, String explanationTwo, String explanationThree,
+                                      String explanationFour, String optionOne, String optionTwo, String optionThree, String optionFour,
+                                      String correctAnswer) {
+        if (!validateQuestionInput(questionId,questionText,
+                optionOne, optionTwo,
+                optionThree, optionFour,
+                explanationOne, explanationTwo,
+                explanationThree, explanationFour,
+                correctAnswer)) {
+            return false;
+        }
+        QuestionModel question = new QuestionModel(textbookId, chapterId, sectionId, blockId, activityId,
+                questionId, questionText, explanationOne, explanationTwo, explanationThree, explanationFour,
+                optionOne, optionTwo, optionThree, optionFour, correctAnswer);
+        return questionDAO.createQuestion(question);
+    }
+
+
+    private static boolean validateBlockInput(String blockId, String contentType) {
+        if (blockId == null || blockId.trim().isEmpty()) {
+            System.out.println("Block ID cannot be empty.");
+            return false;
+        }
+
+        // Assuming valid content types are "text", "picture", "activity"
+        if (contentType == null || !Arrays.asList("text", "picture", "activity").contains(contentType.toLowerCase())) {
+            System.out.println("Invalid content type.");
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    private static boolean validateQuestionInput(String questionId, String questionText,
+                                                 String optionOne, String optionTwo,
+                                                 String optionThree, String optionFour,
+                                                 String explanationOne, String explanationTwo,
+                                                 String explanationThree, String explanationFour,
+                                                 String correctAnswer) {
+        // Validate Question ID
+        if (questionId == null || questionId.trim().isEmpty()) {
+            System.out.println("Question ID cannot be empty.");
+            return false;
+        }
+
+        // Validate Question Text
+        if (questionText == null || questionText.trim().isEmpty()) {
+            System.out.println("Question text cannot be empty.");
+            return false;
+        }
+
+        // Validate Options
+        if (optionOne == null || optionOne.trim().isEmpty()) {
+            System.out.println("Option 1 cannot be empty.");
+            return false;
+        }
+        if (optionTwo == null || optionTwo.trim().isEmpty()) {
+            System.out.println("Option 2 cannot be empty.");
+            return false;
+        }
+        if (optionThree == null || optionThree.trim().isEmpty()) {
+            System.out.println("Option 3 cannot be empty.");
+            return false;
+        }
+        if (optionFour == null || optionFour.trim().isEmpty()) {
+            System.out.println("Option 4 cannot be empty.");
+            return false;
+        }
+
+        // Validate Explanations
+        if (explanationOne == null || explanationOne.trim().isEmpty()) {
+            System.out.println("Explanation for Option 1 cannot be empty.");
+            return false;
+        }
+        if (explanationTwo == null || explanationTwo.trim().isEmpty()) {
+            System.out.println("Explanation for Option 2 cannot be empty.");
+            return false;
+        }
+        if (explanationThree == null || explanationThree.trim().isEmpty()) {
+            System.out.println("Explanation for Option 3 cannot be empty.");
+            return false;
+        }
+        if (explanationFour == null || explanationFour.trim().isEmpty()) {
+            System.out.println("Explanation for Option 4 cannot be empty.");
+            return false;
+        }
+
+        // Validate Correct Answer
+        if (correctAnswer == null || !correctAnswer.matches("[1-4]")) {
+            System.out.println("Correct answer must be one of the options (1/2/3/4).");
+            return false;
+        }
+
+        // If all validations pass, return true
+        return true;
+    }
 
 
     // ==================== Section Visibility Management ====================
@@ -319,4 +452,3 @@ public class TeachingAssistantService {
     // Implement other methods here following similar patterns as above for activities, hiding sections, etc.
 
 }
-

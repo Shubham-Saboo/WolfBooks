@@ -29,7 +29,7 @@ public class ChapterDAO {
         }
     }
 
-    // Retrieve a chapter by ID
+    // Retrieve a chapter by ID (modified to match FacultyService requirements)
     public static ChapterModel getChapterById(String textbookId, String chapterId) {
         String sql = "SELECT * FROM Chapters WHERE textbook_id = ? AND chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -67,14 +67,13 @@ public class ChapterDAO {
 
     // Update a chapter
     public boolean updateChapter(ChapterModel chapter) {
-        String sql = "UPDATE Chapters SET chapter_title = ?, is_hidden = ? WHERE textbook_id = ? AND chapter_id = ?";
+        String sql = "UPDATE Chapters SET chapter_title = ?, is_hidden = ? WHERE chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, chapter.getChapterTitle());
             pstmt.setBoolean(2, chapter.isHidden());
-            pstmt.setString(3, chapter.getTextbookId());
-            pstmt.setString(4, chapter.getChapterId());
+            pstmt.setString(3, chapter.getChapterId());
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
@@ -84,14 +83,13 @@ public class ChapterDAO {
         }
     }
 
-    // Delete a chapter
-    public boolean deleteChapter(String textbookId, String chapterId) {
-        String sql = "DELETE FROM Chapters WHERE textbook_id = ? AND chapter_id = ?";
+    // Delete a chapter (modified to match FacultyService requirements)
+    public boolean deleteChapter(String chapterId) {
+        String sql = "DELETE FROM Chapters WHERE chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, textbookId);
-            pstmt.setString(2, chapterId);
+            pstmt.setString(1, chapterId);
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
@@ -103,13 +101,12 @@ public class ChapterDAO {
 
     // Utility method to extract ChapterModel from ResultSet
     private static ChapterModel extractChapterFromResultSet(ResultSet rs) throws SQLException {
-        ChapterModel chapter = new ChapterModel(
-                rs.getString("chapter_id"),
-                rs.getString("textbook_id"),
-                rs.getString("chapter_title"),
-                rs.getBoolean("is_hidden"),
-                rs.getString("created_by")
+        return new ChapterModel(
+            rs.getString("chapter_id"),
+            rs.getString("textbook_id"),
+            rs.getString("chapter_title"),
+            rs.getBoolean("is_hidden"),
+            rs.getString("created_by")
         );
-        return chapter;
     }
 }

@@ -8,6 +8,7 @@ import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
 import src.main.java.WolfBooks.controller.LandingPageController;
 import src.main.java.WolfBooks.services.AdminService;
+import src.main.java.WolfBooks.services.TeachingAssistantService;
 
 public class App {
     public static void main(String[] args) {
@@ -37,6 +38,7 @@ public class App {
             SectionDAO sectionDAO = new SectionDAO();
             BlockDAO blockDAO = new BlockDAO();
             TeachingAssistantDAO teachingAssistantDAO = new TeachingAssistantDAO();
+            QueryDAO QueryDAO = new QueryDAO();
             
 
             // TODO: Initialize other DAOs when implemented
@@ -47,12 +49,14 @@ public class App {
             TeachingAssistantService taService = new TeachingAssistantService(teachingAssistantDAO);
 
             // Initialize Controllers
-            LandingPageController landingPage = new LandingPageController(adminService);
+            LandingPageController landingPage = new LandingPageController(adminService,taService);
 
             // Start the application
             System.out.println("Starting WolfBooks Application...");
             landingPage.start();
+
             conn.close();
+
 
 
 

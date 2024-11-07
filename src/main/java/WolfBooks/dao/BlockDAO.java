@@ -1,9 +1,8 @@
 package src.main.java.WolfBooks.dao;
+
 import src.main.java.WolfBooks.models.BlockModel;
-import src.main.java.WolfBooks.models.StudentActivityModel;
 import src.main.java.WolfBooks.util.DatabaseConnection;
 
-import java.awt.image.ByteLookupTable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,9 +20,9 @@ public class BlockDAO {
     public boolean createBlock(BlockModel block) {
         String sqlQuery = "INSERT INTO blocks (section_id, textbook_id, block_id, chapter_id, content_type, content, is_hidden, created_by) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            
             stmt.setString(1, block.getSectionId());
             stmt.setString(2, block.getTextbookId());
             stmt.setString(3, block.getBlockId());
@@ -32,62 +31,44 @@ public class BlockDAO {
             stmt.setString(6, block.getContent());
             stmt.setBoolean(7, block.isHidden());
             stmt.setString(8, block.getCreatedBy());
+            
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
 
     public boolean modifyBlock(BlockModel block) {
-        String sqlQuery = "UPDATE blocks SET content_type = ?, content = ?, is_hidden = ? " +
-                "WHERE section_id = ? AND textbook_id = ? AND block_id = ? AND chapter_id = ?";
-        try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+        String sqlQuery = "UPDATE blocks SET content_type = ?, content = ?, is_hidden = ? WHERE block_id = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            
             stmt.setString(1, block.getContentType());
             stmt.setString(2, block.getContent());
             stmt.setBoolean(3, block.isHidden());
-            stmt.setString(4, block.getSectionId());
-            stmt.setString(5, block.getTextbookId());
-            stmt.setString(6, block.getBlockId());
-            stmt.setString(7, block.getChapterId());
+            stmt.setString(4, block.getBlockId());
+            
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Deletes a block from the database
-     * @param block The model of the block to be removed
-     * @return true if the block was deleted, false otherwise
-     */
     public boolean deleteBlock(BlockModel block) {
-        String sqlQuery = "DELETE FROM blocks WHERE section_id = ? AND textbook_id = ? AND block_id = ? AND chapter_id = ?";
-        try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-            stmt.setString(1, block.getSectionId());
-            stmt.setString(2, block.getTextbookId());
-            stmt.setString(3, block.getBlockId());
-            stmt.setString(4, block.getChapterId());
+        String sqlQuery = "DELETE FROM blocks WHERE block_id = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            
+            stmt.setString(1, block.getBlockId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Finds a specific block from the 'blocks' table.
-     * @param textbookId The textbook to look in.
-     * @param chapterId The chapter of the textbook to look in.
-     * @param sectionId The section of the textbook to look in.
-     * @param blockId The block id of the block within the section.
-     * @return The block if it exists, null otherwise.
-     */
     public static BlockModel findBlock(String textbookId, String chapterId, String sectionId, String blockId) {
         String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ?";
         try {
@@ -106,28 +87,23 @@ public class BlockDAO {
         }
     }
 
-    // Find block by section
-    public List<BlockModel> findBlocksBySection(String textbookId, String chapterId, String sectionId) {
-                String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
-        try {
-            Connection conn = DatabaseConnection.getInstance().getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-            stmt.setString(1, textbookId);
-            stmt.setString(2, chapterId);
-            stmt.setString(3, sectionId);
-
+    public List<BlockModel> findBlocksBySection(String sectionId) {
+        String sqlQuery = "SELECT * FROM blocks WHERE section_id = ?";
+        List<BlockModel> blockModels = new ArrayList<>();
+        
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            
+            stmt.setString(1, sectionId);
             ResultSet rs = stmt.executeQuery();
-            List<BlockModel> blockModels = new ArrayList<>();
+            
             while (rs.next()) {
                 blockModels.add(mapResultSetToBlock(rs));
             }
-
-            stmt.close();
-            rs.close();
             return blockModels;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return null;
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 

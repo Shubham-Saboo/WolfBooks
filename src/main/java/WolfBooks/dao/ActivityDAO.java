@@ -107,23 +107,18 @@ public class ActivityDAO {
     }
 
     // Delete an existing activity by ID
-    public boolean deleteActivity(String textbookId,String chapterId,String sectionId,String blockId,String activityId) {
-        String sql="DELETE FROM Activities WHERE textbook_id=? AND chapter_id=? AND section_id=? AND block_id=? AND activity_id=?";
-
-        try(Connection conn=DatabaseConnection.getInstance().getConnection();
-            PreparedStatement 	pstmt=conn.prepareStatement(sql)){
-
-            pstmt.setString (1,textbookId);
-            pstmt.setString (2 ,chapterId );
-            pstmt.setString (3 ,sectionId );
-            pstmt.setString (4 ,blockId );
-            pstmt.setString (5 ,activityId );
-
-            int rowsAffected=pstmt.executeUpdate ();
-            return rowsAffected>0;
-        }catch(SQLException e){
-            e.printStackTrace ();
-            return false ;
+    public boolean deleteActivity(String activityId) {
+        String sql = "DELETE FROM Activities WHERE activity_id = ?";
+    
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    
+            pstmt.setString(1, activityId);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -139,4 +134,54 @@ public class ActivityDAO {
                 rs.getString ("created_by")
         );
     }
+    // Add these methods to ActivityDAO
+public boolean hideActivity(String activityId) {
+    String sql = "UPDATE Activity SET is_hidden = true WHERE activity_id = ?";
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, activityId);
+        return pstmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
 }
+
+public boolean addQuestion(String questionId, String activityId, String questionText,
+                         String option1, String explanation1,
+                         String option2, String explanation2,
+                         String option3, String explanation3,
+                         String option4, String explanation4,
+                         int answer) {
+    String sql = "INSERT INTO Questions (question_id, activity_id, question_text, " +
+                "option1, explanation1, option2, explanation2, " +
+                "option3, explanation3, option4, explanation4, answer) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, questionId);
+        pstmt.setString(2, activityId);
+        pstmt.setString(3, questionText);
+        pstmt.setString(4, option1);
+        pstmt.setString(5, explanation1);
+        pstmt.setString(6, option2);
+        pstmt.setString(7, explanation2);
+        pstmt.setString(8, option3);
+        pstmt.setString(9, explanation3);
+        pstmt.setString(10, option4);
+        pstmt.setString(11, explanation4);
+        pstmt.setInt(12, answer);
+        
+        return pstmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+    
+}
+
