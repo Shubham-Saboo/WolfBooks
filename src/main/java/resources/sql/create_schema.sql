@@ -217,3 +217,17 @@ CREATE TABLE IF NOT EXISTS StudentGrades (
     FOREIGN KEY (student_id) REFERENCES Users(user_id),
     FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
+
+DELIMITER $$
+CREATE TRIGGER notify_enrollment_change
+AFTER UPDATE ON Enrollments
+FOR EACH ROW
+BEGIN
+    -- Check if the status changed from 'Pending' to 'Enrolled'
+    IF OLD.user_status = 'Pending' AND NEW.user_status = 'Enrolled' THEN
+        -- Insert a notification for the user
+        INSERT INTO Notifications (notification_id, content, user_id, is_read)
+        VALUES (UUID(), CONCAT('Your enrollment status for course ', NEW.course_id, ' has been updated to Enrolled.'), NEW.user_id, FALSE);
+    END IF;
+END$$
+DELIMITER ;
