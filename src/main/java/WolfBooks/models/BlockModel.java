@@ -90,12 +90,12 @@ public class BlockModel {
     }
 
     public void setContentType(String contentType) {
-        if (contentType == null || contentType.trim().isEmpty()) {
-            throw new IllegalArgumentException("Content type cannot be null or empty");
-        }
-        if (!contentType.equals("Text") && !contentType.equals("Image") && !contentType.equals("Activity")) {
-            throw new IllegalArgumentException("Invalid content type. Must be Text, Image, or Activity");
-        }
+//        if (contentType == null || contentType.trim().isEmpty()) {
+//            throw new IllegalArgumentException("Content type cannot be null or empty");
+//        }
+//        if (!contentType.equals("Text") && !contentType.equals("Image") && !contentType.equals("Activity")) {
+//            throw new IllegalArgumentException("Invalid content type. Must be Text, Image, or Activity");
+//        }
         this.contentType = contentType;
     }
 

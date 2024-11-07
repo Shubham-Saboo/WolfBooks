@@ -87,6 +87,30 @@ public class BlockDAO {
         }
     }
 
+        // Find block by section
+    public List<BlockModel> getBlocksBySection(String textbookId, String chapterId, String sectionId) {
+                String sqlQuery = "SELECT * FROM blocks WHERE textbook_id = ? AND chapter_id = ? AND section_id = ?";
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+            stmt.setString(1, textbookId);
+            stmt.setString(2, chapterId);
+            stmt.setString(3, sectionId);
+
+            ResultSet rs = stmt.executeQuery();
+            List<BlockModel> blockModels = new ArrayList<>();
+            while (rs.next()) {
+                blockModels.add(mapResultSetToBlock(rs));
+            }
+
+            stmt.close();
+            rs.close();
+            return blockModels;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
     public List<BlockModel> findBlocksBySection(String sectionId) {
         String sqlQuery = "SELECT * FROM blocks WHERE section_id = ?";

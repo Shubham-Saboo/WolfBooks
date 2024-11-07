@@ -25,7 +25,7 @@ public class DatabaseConnection {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = "Aditya@97"; //sc.nextLine(); // Most likely ''
+            String dbPass = ""; //sc.nextLine(); // Most likely ''
 
             try {
                 connection = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);

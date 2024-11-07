@@ -47,6 +47,25 @@ public class EnrollmentDAO {
         return null;
     }
 
+    public List<EnrollmentModel> getStudentEnrollments(UserModel student) {
+        final String enrolled = "enrolled";
+        String sql = "SELECT * FROM Enrollments WHERE user_id = ? AND user_status = ?";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, student.getUserId());
+            pstmt.setString(2, enrolled);
+            ResultSet rs = pstmt.executeQuery();
+            List<EnrollmentModel> enrollments = new ArrayList<>();
+            while (rs.next()) {
+                enrollments.add(extractEnrollmentFromResultSet(rs));
+            }
+            return enrollments;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
     // Get list of enrolled students for a course
     public List<UserModel> getEnrolledStudents(String courseId) {

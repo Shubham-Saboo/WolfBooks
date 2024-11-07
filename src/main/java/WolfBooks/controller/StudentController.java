@@ -90,18 +90,18 @@ public class StudentController {
 
     public void viewSection(int courseNumber, int chapterNumber, int sectionNumber) {
         // Check the course
-        if (courseNumber < 1 || courseNumber > courses.size() + 1) return;
+        if (courseNumber < 1 || courseNumber > courses.size()) return;
         CourseModel course = courses.get(courseNumber - 1);
         String textbookId = course.getTextbookId();
 
         // Check and get chapters
         List<ChapterModel> chapters = studentService.getVisibleChapters(textbookId);
-        if (chapterNumber < 1 || chapterNumber > chapters.size() + 1) return;
+        if (chapterNumber < 1 || chapterNumber > chapters.size()) return;
         String chapterId = chapters.get(chapterNumber - 1).getChapterId();
 
         // Check and get sections
         List<SectionModel> sections = studentService.getVisibleSections(textbookId, chapterId);
-        if (sectionNumber < 1 || sectionNumber > sections.size() + 1) return;
+        if (sectionNumber < 1 || sectionNumber > sections.size()) return;
         String sectionId = sections.get(sectionNumber - 1).getSectionId();
 
         // Get the blocks
@@ -220,9 +220,11 @@ public class StudentController {
         }
         if ("text".equals(block.getContentType())) {
             System.out.println(block.getContent());
+            System.out.println();
         }
         else if ("picture".equals(block.getContentType())) {
             System.out.println(block.getContent());
+            System.out.println();
         }
         else if ("activity".equals(block.getContentType())) {
             List<QuestionModel> questions = studentService.getActivityQuestions(block.getTextbookId(), block.getChapterId(), block.getSectionId(), block.getBlockId(), block.getContent());

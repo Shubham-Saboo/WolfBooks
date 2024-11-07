@@ -51,13 +51,14 @@ public class SectionDAO {
 
 
     // Retrieve all sections for a specific chapter
-    public List<SectionModel> getSectionsByChapter(String chapterId) {
+    public List<SectionModel> getSectionsByChapter(String textbookId, String chapterId) {
         List<SectionModel> sections = new ArrayList<>();
-        String sql = "SELECT * FROM Sections WHERE chapter_id = ?";
+        String sql = "SELECT * FROM Sections WHERE textbook_id = ? AND chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, chapterId);
+            pstmt.setString(1, textbookId);
+            pstmt.setString(2, chapterId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 sections.add(extractSectionFromResultSet(rs));

@@ -227,18 +227,18 @@ public class TeachingAssistantDAO {
     }
 
     // ==================== Activity Operations ====================
-    public boolean modifyActivity(String activityId, String newDetails, String taId, String courseId) throws SQLException {
-        if (isTAAssignedToCourse(taId, courseId)) {
-            String query = "UPDATE Activities SET details = ? WHERE activity_id = ?";
-            try (Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, newDetails);
-                stmt.setString(2, activityId);
-                return stmt.executeUpdate() > 0;
-            }
-        }
-        return false;
-    }
+//    public boolean modifyActivity(String activityId, String newDetails, String taId, String courseId) throws SQLException {
+//        if (isTAAssignedToCourse(taId, courseId)) {
+//            String query = "UPDATE Activities SET details = ? WHERE activity_id = ?";
+//            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+//                PreparedStatement stmt = conn.prepareStatement(query)) {
+//                stmt.setString(1, newDetails);
+//                stmt.setString(2, activityId);
+//                return stmt.executeUpdate() > 0;
+//            }
+//        }
+//        return false;
+//    }
 
     // ==================== Helper Methods ====================
     private TeachingAssistantModel mapResultSetToTA(ResultSet rs) throws SQLException {
@@ -321,18 +321,81 @@ public boolean deleteSection(String sectionId, String taId) throws SQLException 
     return false;
 }
 
+    public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {
+        // First drop the existing procedure
+        String dropProc = "DROP PROCEDURE IF EXISTS DeleteBlockAndActivity";
 
-public boolean deleteContentBlock(String blockId, String taId) throws SQLException {
-    if (validateTAOwnership(taId, blockId, "Blocks")) {
-        String query = "DELETE FROM Blocks WHERE block_id = ?";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, blockId);
-            return stmt.executeUpdate() > 0;
+        // Create the procedure
+        String createProc =
+                "CREATE PROCEDURE DeleteBlockAndActivity(" +
+                        "    IN p_textbook_id VARCHAR(50)," +
+                        "    IN p_chapter_id VARCHAR(50)," +
+                        "    IN p_section_id VARCHAR(50)," +
+                        "    IN p_block_id VARCHAR(50)" +
+                        ")" +
+                        "BEGIN " +
+                        "    DELETE FROM StudentActivities " +
+                        "    WHERE textbook_id = p_textbook_id " +
+                        "    AND chapter_id = p_chapter_id " +
+                        "    AND section_id = p_section_id " +
+                        "    AND block_id = p_block_id; " +
 
-    
+                        "    DELETE FROM Questions " +
+                        "    WHERE textbook_id = p_textbook_id " +
+                        "    AND chapter_id = p_chapter_id " +
+                        "    AND section_id = p_section_id " +
+                        "    AND block_id = p_block_id; " +
+
+                        "    DELETE FROM Activities " +
+                        "    WHERE textbook_id = p_textbook_id " +
+                        "    AND chapter_id = p_chapter_id " +
+                        "    AND section_id = p_section_id " +
+                        "    AND block_id = p_block_id; " +
+
+                        "    DELETE FROM Blocks " +
+                        "    WHERE textbook_id = p_textbook_id " +
+                        "    AND chapter_id = p_chapter_id " +
+                        "    AND section_id = p_section_id " +
+                        "    AND block_id = p_block_id; " +
+                        "END";
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+            // Drop existing procedure
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute(dropProc);
+                stmt.execute(createProc);
+            }
+
+            // Call the procedure
+            String callProc = "{call DeleteBlockAndActivity(?, ?, ?, ?)}";
+            try (CallableStatement cstmt = conn.prepareCall(callProc)) {
+                cstmt.setString(1, textbookId);
+                cstmt.setString(2, chapterId);
+                cstmt.setString(3, sectionId);
+                cstmt.setString(4, blockId);
+
+                cstmt.execute();
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in deleteContentBlock: " + e.getMessage());
+            throw e;
         }
     }
+
+//public boolean deleteContentBlock(String blockId, String taId) throws SQLException {
+//    if (validateTAOwnership(taId, blockId, "Blocks")) {
+//        String query = "DELETE FROM Blocks WHERE block_id = ?";
+//        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//            stmt.setString(1, blockId);
+//            return stmt.executeUpdate() > 0;
+//
+//
+//        }
+//    }
+//}
+
 //public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {
 //    String procedureCall = "CALL DeleteBlockAndActivity(?, ?, ?, ?)";  // Note: lowercase 'call'
 //
