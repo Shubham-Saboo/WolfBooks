@@ -61,6 +61,7 @@ public class UserDAO {
             boolean userCreated = createUser(ta);
             if (!userCreated) {
                 conn.rollback();
+                System.out.println("Rolling back transaction");
                 return false;
             }
 

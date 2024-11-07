@@ -12,8 +12,8 @@ public class FacultyController {
     private FacultyService facultyService;
     private Scanner scanner;
 
-    public FacultyController(FacultyService facultyService) {
-        this.facultyService = facultyService;
+    public FacultyController() {
+        this.facultyService = new FacultyService();
         this.scanner = new Scanner(System.in);
     }
 
@@ -118,7 +118,7 @@ private void goToActiveCourse(String facultyId) throws SQLException {
                 modifyChapters(courseId);
                 break;
             case 6:
-                addTA(courseId);
+                addTA(courseId,facultyId);
                 break;
             case 7:
                 return;
@@ -274,7 +274,7 @@ private void viewStudents(String courseID) throws SQLException {
 }
 
 // Add TA to a course
-private void addTA(String courseID) throws SQLException {
+private void addTA(String courseID, String FacultyId) throws SQLException {
     Scanner scanner = new Scanner(System.in);
     
     System.out.print("Enter First Name: ");
@@ -296,7 +296,7 @@ private void addTA(String courseID) throws SQLException {
     
     switch (choice) {
         case 1:
-            boolean success = facultyService.addTA(firstName, lastName, email, defaultPassword, courseID);
+            boolean success = facultyService.addTA(firstName, lastName, email, defaultPassword, courseID,FacultyId);
             if (success) {
                 System.out.println("TA added successfully.");
             } else {

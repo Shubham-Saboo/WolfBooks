@@ -11,25 +11,33 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class FacultyService {
-    private final CourseDAO courseDAO;
-    private final EnrollmentDAO enrollmentDAO;
-    private final ChapterDAO chapterDAO;
-    private final SectionDAO sectionDAO;
-    private final BlockDAO blockDAO;
-    private final ActivityDAO activityDAO;
-    private final UserDAO userDAO;
+    private final UserDAO userDAO = new UserDAO();
+    private final BlockDAO blockDAO = new BlockDAO();
+    private final SectionDAO sectionDAO = new SectionDAO();
+    private final StudentActivityDAO studentActivityDAO = new StudentActivityDAO();
+    private final StudentGradesDAO studentGradesDAO = new StudentGradesDAO();
+    private final QuestionDAO questionDAO = new QuestionDAO();
+    private final CourseDAO courseDAO = new CourseDAO();
+    private final EnrollmentDAO enrollmentDAO = new EnrollmentDAO();
+    private final ActivityDAO activityDAO = new ActivityDAO();
+    private final TextbookDAO textbookDAO = new TextbookDAO();
+    private final ChapterDAO chapterDAO = new ChapterDAO();
 
-    public FacultyService(CourseDAO courseDAO, EnrollmentDAO enrollmentDAO, 
-                         ChapterDAO chapterDAO, SectionDAO sectionDAO, 
-                         BlockDAO blockDAO, ActivityDAO activityDAO, 
-                         UserDAO userDAO) {
-        this.courseDAO = courseDAO;
-        this.enrollmentDAO = enrollmentDAO;
-        this.chapterDAO = chapterDAO;
-        this.sectionDAO = sectionDAO;
-        this.blockDAO = blockDAO;
-        this.activityDAO = activityDAO;
-        this.userDAO = userDAO;
+//    public FacultyService(CourseDAO courseDAO, EnrollmentDAO enrollmentDAO,
+//                         ChapterDAO chapterDAO, SectionDAO sectionDAO,
+//                         BlockDAO blockDAO, ActivityDAO activityDAO,
+//                         UserDAO userDAO) {
+//        this.courseDAO = courseDAO;
+//        this.enrollmentDAO = enrollmentDAO;
+//        this.chapterDAO = chapterDAO;
+//        this.sectionDAO = sectionDAO;
+//        this.blockDAO = blockDAO;
+//        this.activityDAO = activityDAO;
+//        this.userDAO = userDAO;
+//    }
+
+    public FacultyService(){
+
     }
 
     private String getTextbookIdForBlock(String blockId) throws SQLException {
@@ -258,10 +266,10 @@ private String getTextbookIdForChapter(String chapterId) throws SQLException {
     }
 
     // TA Management
-    public boolean addTA(String firstName, String lastName, String email, String defaultPassword, String courseId) throws SQLException {
+    public boolean addTA(String firstName, String lastName, String email, String defaultPassword, String courseId, String FacultyId) throws SQLException {
         String taId = "TA" + System.currentTimeMillis();
         UserModel ta = new UserModel(taId, firstName, lastName, email, defaultPassword, "teaching_assistant", true);
-        return userDAO.createTAAccount(ta, courseId, null);
+        return userDAO.createTAAccount(ta, courseId, FacultyId);
     }
 
     // Password Management

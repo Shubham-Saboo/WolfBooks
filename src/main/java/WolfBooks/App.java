@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import src.main.java.WolfBooks.dao.*;
+import src.main.java.WolfBooks.services.FacultyService;
 import src.main.java.WolfBooks.util.*;
 import src.main.java.WolfBooks.services.WolfbooksService;
 import src.main.java.WolfBooks.controller.LandingPageController;
@@ -18,7 +19,7 @@ public class App {
             String dbUrl = "jdbc:mysql://localhost:3306/";
             String dbSchema = "WolfBooks";
             String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = ""; //sc.nextLine(); // Most likely ''
+            String dbPass = "@Qwerty12345"; //sc.nextLine(); // Most likely ''
             try {
                 conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
             } catch (SQLException e) {
@@ -39,6 +40,8 @@ public class App {
             BlockDAO blockDAO = new BlockDAO();
             TeachingAssistantDAO teachingAssistantDAO = new TeachingAssistantDAO();
             QueryDAO QueryDAO = new QueryDAO();
+
+            CourseDAO CourseDAO = new CourseDAO();
             
 
             // TODO: Initialize other DAOs when implemented
@@ -47,7 +50,7 @@ public class App {
             AdminService adminService = new AdminService(userDAO);
             WolfbooksService wolfbooksService = new WolfbooksService(conn);
             TeachingAssistantService taService = new TeachingAssistantService(teachingAssistantDAO);
-
+            FacultyService facultyService = new FacultyService();
             // Initialize Controllers
             LandingPageController landingPage = new LandingPageController(adminService,taService);
 

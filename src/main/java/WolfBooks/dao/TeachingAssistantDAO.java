@@ -24,7 +24,7 @@ public class TeachingAssistantDAO {
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Hey I got you!!");
+
                 return mapResultSetToTA(rs);
             }
         }

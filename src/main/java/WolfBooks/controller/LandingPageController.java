@@ -1,4 +1,5 @@
 package src.main.java.WolfBooks.controller;
+import src.main.java.WolfBooks.services.FacultyService;
 import src.main.java.WolfBooks.services.TeachingAssistantService;
 import src.main.java.WolfBooks.services.AdminService;
 import src.main.java.WolfBooks.models.UserModel;
@@ -19,7 +20,7 @@ public class LandingPageController {
     // private final FacultyController facultyController;
     // private final TAController taController;
     private final StudentController studentController;
-
+    private final FacultyController facultyController;
     public LandingPageController(AdminService adminService,TeachingAssistantService taService ) {
         this.adminService = adminService;
         this.taService = taService;
@@ -27,6 +28,7 @@ public class LandingPageController {
         this.adminController = new AdminController(adminService);
         this.taController = new TeachingAssistantController(taService);
         this.studentController = new StudentController();
+        this.facultyController = new FacultyController();
     }
 
     public void start() {
@@ -41,7 +43,7 @@ public class LandingPageController {
                         handleLogin("admin");
                         break;
                     case "2": // Faculty Login
-                        handleLogin("faculty");
+                        facultyController.login();
                         break;
                     case "3": // TA Login
                         handleLogin("teaching_assistant");
@@ -136,9 +138,6 @@ public class LandingPageController {
                 switch (role) {
                     case "admin":
                         adminController.start(user);
-                        break;
-                    case "faculty":
-                        System.out.println("Faculty login successful! (Controller not implemented)");
                         break;
                     case "teaching_assistant":
                         try {

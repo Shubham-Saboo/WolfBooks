@@ -72,7 +72,7 @@ public class EnrollmentDAO {
         List<UserModel> students = new ArrayList<>();
         String sql = "SELECT u.* FROM Users u " +
                     "JOIN Enrollments e ON u.user_id = e.user_id " +
-                    "WHERE e.course_id = ? AND e.user_status = 'Approved'";
+                    "WHERE e.course_id = ? AND e.user_status = 'enrolled'";
 
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

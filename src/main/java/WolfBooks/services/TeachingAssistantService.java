@@ -73,12 +73,7 @@ public class TeachingAssistantService {
         try {
             validateChapterInput(chapterId, chapterTitle);
             //List<String> textbookId= getAssignedTextbooksForCourse(createdBy,courseId);
-            if (textbookId.isEmpty()){
-                System.out.println("chutuye");
-            }
-            else{
-                System.out.println(textbookId);
-            }
+
             validateId(textbookId, "Textbook ID");
             validateId(createdBy, "Creator ID");
             return taDAO.addChapter(textbookId, chapterId, chapterTitle, createdBy);
@@ -309,7 +304,7 @@ public class TeachingAssistantService {
     public List<String> getAssignedTextbooksForCourse(String taId, String courseId) {
         try {
             List<String> textbooks = taDAO.getAssignedTextbooks(taId, courseId);
-            System.out.println("Calling from function: " + textbooks.get(0));
+
             return textbooks;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to retrieve textbooks: " + e.getMessage());
