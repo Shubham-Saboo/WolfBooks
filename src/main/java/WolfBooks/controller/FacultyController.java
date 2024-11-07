@@ -637,7 +637,7 @@ public class FacultyController {
 //    }
 
     private void deleteChapter(String textboookId,String chapterId, String courseId,String facultyId) {
-        if (facultyService.deleteChapter(chapterId, facultyId)) {
+        if (facultyService.deleteChapter(chapterId, facultyId,textboookId,courseId)) {
             System.out.println("Chapter deleted successfully!");
         } else {
             System.out.println("Failed to delete chapter.");
@@ -671,7 +671,7 @@ public class FacultyController {
                 hideSection(sectionId, textbookId, chapterId,facultyId,courseId);
                 ;
             case "2":
-                deleteSection(sectionId,facultyId);
+                deleteSection(textbookId,sectionId,facultyId,chapterId);
                 break;
 
             case "3":
@@ -694,8 +694,8 @@ public class FacultyController {
     }
 
 
-    private void deleteSection(String sectionId,String facultyId) {
-        if (facultyService.deleteSection(sectionId,facultyId)) {
+    private void deleteSection(String textbookId, String sectionId,String facultyId, String chapterId) {
+        if (facultyService.deleteSection(textbookId,sectionId,facultyId,chapterId)) {
             System.out.println("Section deleted successfully!");
         } else {
             System.out.println("Failed to delete section.");

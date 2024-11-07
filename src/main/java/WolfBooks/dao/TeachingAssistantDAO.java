@@ -311,28 +311,34 @@ public class TeachingAssistantDAO {
     }
 
 // ==================== Deleting Content Operations ====================
-public boolean deleteChapter(String chapterId, String taId) throws SQLException {
+public boolean deleteChapter(String chapterId, String taId, String textbookId ,String courseId) throws SQLException {
 
-        String query = "DELETE FROM Chapters WHERE chapter_id = ?";
+        String query = "DELETE FROM Chapters WHERE chapter_id = ? AND created_by = ? AND textbook_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, chapterId);
+            stmt.setString(3, textbookId);
+            stmt.setString(2, taId);
+
             return stmt.executeUpdate() > 0;
         }
 
 }
 
 
-public boolean deleteSection(String sectionId, String taId) throws SQLException {
-    if (validateTAOwnership(taId, sectionId, "Sections")) {
-        String query = "DELETE FROM Sections WHERE section_id = ?";
+public boolean deleteSection(String textbookId,String sectionId, String taId, String chapterId) throws SQLException {
+
+        String query = "DELETE FROM Sections WHERE section_id = ? AND created_by = ? AND textbook_id = ? AND chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, sectionId);
+            stmt.setString(3, textbookId);
+            stmt.setString(2, chapterId);
+            stmt.setString(2, taId);
+            stmt.setString(4, chapterId);
             return stmt.executeUpdate() > 0;
         }
-    }
-    return false;
+
 }
 
     public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {

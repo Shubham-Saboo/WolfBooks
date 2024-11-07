@@ -432,22 +432,22 @@ private String getTextbookIdForChapter(String chapterId) throws SQLException {
     }
 
     // Delete Chapter
-    public boolean deleteChapter(String chapterId, String taId) {
+    public boolean deleteChapter(String chapterId, String taId,String textboookId, String courseId) {
         try {
             validateId(chapterId, "Chapter ID");
             validateId(taId, "TA ID");
-            return taDAO.deleteChapter(chapterId, taId);
+            return taDAO.deleteChapter(chapterId, taId,textboookId,courseId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete chapter: " + e.getMessage());
         }
     }
 
     // Delete Section
-    public boolean deleteSection(String sectionId, String taId) {
+    public boolean deleteSection(String textbookId,String sectionId, String taId,String chapterId) {
         try {
             validateId(sectionId, "Section ID");
             validateId(taId, "TA ID");
-            return taDAO.deleteSection(sectionId, taId);
+            return taDAO.deleteSection(textbookId,sectionId, taId,chapterId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete section: " + e.getMessage());
         }
