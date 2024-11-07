@@ -16,21 +16,7 @@ public class App {
         Connection conn;
         Scanner sc = new Scanner(System.in);
         try {
-            String dbUrl = "jdbc:mysql://localhost:3306/";
-            String dbSchema = "WolfBooks";
-            String dbUser = "root"; //sc.nextLine(); // Most likely 'root'
-            String dbPass = ""; //sc.nextLine(); // Most likely ''
-            try {
-                conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
-            } catch (SQLException e) {
-                conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
-                InitializeDatabase init = new InitializeDatabase();
-                init.createSchema(conn);
-                init.insertDemoData(conn);
-                conn.close();
-                conn = DriverManager.getConnection(dbUrl + dbSchema, dbUser, dbPass);
-            }
-
+            conn = DatabaseConnection.getConnection();
             System.out.println("Connected to database");
             // Initialize DAOs with connection
             UserDAO userDAO = new UserDAO();
