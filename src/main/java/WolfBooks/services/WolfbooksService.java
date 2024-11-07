@@ -45,9 +45,10 @@ public class WolfbooksService {
         System.out.println("2. Faculty Login");
         System.out.println("3. TA Login");
         System.out.println("4. Student Login");
-        System.out.println("5. Exit");
+        System.out.println("5. Queries");
+        System.out.println("6. Exit");
         int role = sc.nextInt();
-        if (role == 5) {
+        if (role == 6) {
             return false;
         }
         String username = sc.nextLine();

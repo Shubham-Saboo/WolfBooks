@@ -87,6 +87,7 @@ public class BlockDAO {
         }
     }
 
+
     public List<BlockModel> findBlocksBySection(String sectionId) {
         String sqlQuery = "SELECT * FROM blocks WHERE section_id = ?";
         List<BlockModel> blockModels = new ArrayList<>();
@@ -95,6 +96,7 @@ public class BlockDAO {
              PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
             
             stmt.setString(1, sectionId);
+
             ResultSet rs = stmt.executeQuery();
             
             while (rs.next()) {

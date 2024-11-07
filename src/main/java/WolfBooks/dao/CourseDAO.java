@@ -3,6 +3,7 @@ package src.main.java.WolfBooks.dao;
 import src.main.java.WolfBooks.models.CourseModel;
 import src.main.java.WolfBooks.util.DatabaseConnection;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,9 +113,23 @@ public class CourseDAO {
 
             int rowsAffected=pstmt .executeUpdate ();
             return rowsAffected>0;
-        }catch(SQLException e){
+        } catch(SQLException e) {
             e.printStackTrace ();
             return false ;
+        }
+    }
+
+    public CourseModel getCourseByToken(String token) {
+        String sql = "SELECT * FROM Courses WHERE token = ?";
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, token);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next() ? extractCourseFromResultSet(rs) : null;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
         }
     }
 

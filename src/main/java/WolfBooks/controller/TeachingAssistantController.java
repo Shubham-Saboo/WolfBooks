@@ -214,6 +214,7 @@ public class TeachingAssistantController {
             System.out.println("\n1. Add Text");
             System.out.println("2. Add Picture");
             System.out.println("3. Add Activity");
+
             System.out.println("4. Go Back");
             System.out.println("5. Landing Page");
             System.out.print("Enter your choice (1-5): ");
@@ -301,6 +302,7 @@ public class TeachingAssistantController {
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
 
+
             switch (choice) {
                 case "1":
                     // Save picture in the database using AdminService
@@ -331,33 +333,32 @@ public class TeachingAssistantController {
         String chapterId = scanner.nextLine();
         String textbookId = taService.getAssignedTextbooksForCourse(currentTA.getUserId(),courseId).get(0);
 
-        System.out.println("1. Modify Chapter Title");
-        System.out.println("2. Delete Chapter");
-        System.out.println("3. Hide Chapter");
-        System.out.println("4. Add new section");
-        System.out.println("5. Modify section");
-        System.out.println("6. Go Back");
+//        System.out.println("1. Modify Chapter Title");
+//        System.out.println("2. Delete Chapter");
+//        System.out.println("3. Hide Chapter");Chapter
+        System.out.println("1. Add new section\n");
+        System.out.println("2. Modify section\n");
+        System.out.println("3. Go Back\n");
         System.out.print("Enter your choice: ");
 
         String choice = scanner.nextLine();
         switch (choice) {
+//            case "1":
+//                modifyChapterTitle(chapterId, courseId);
+//                break;
+//            case "2":
+//                deleteChapter(chapterId, courseId);
+//                break;
+//            case "3":
+//                hideChapter(chapterId, courseId);
+//                break;
             case "1":
-                modifyChapterTitle(chapterId, courseId);
-                break;
-            case "2":
-                deleteChapter(chapterId, courseId);
-                break;
-            case "3":
-                hideChapter(chapterId, courseId);
-                break;
-            case "4":
                 handleAddNewSection(textbookId, chapterId);
                 break;
-            case "5":
+            case "2":
                 handleModifySection(textbookId,chapterId);
-
                 break;
-            case "6":
+            case "3":
                 return;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -449,32 +450,45 @@ public class TeachingAssistantController {
         System.out.print("Enter Section ID: ");
         String sectionId = scanner.nextLine();
 
-        System.out.println("1. Modify Section Title");
-        System.out.println("2. Delete Section");
-        System.out.println("3. Hide Section");
-        System.out.print("4. Add new block ");
-        System.out.println("5. Modify exsiting block");
-        System.out.println("6. Go Back");
+//        System.out.println("1. Modify Section Title");
+//        System.out.println("2. Delete Section");
+//        System.out.println("3. Hide Section");
+        System.out.print("1. Add new content block\n ");
+        System.out.println("2. Modify existing content block\n");
+        System.out.print("3. Delete content block\n");
+        System.out.print("4. Hide content block\n");
+        System.out.println("5. Go Back\n");
         System.out.print("Enter your choice: ");
 
         String choice = scanner.nextLine();
         switch (choice) {
+//            case "1":
+//                modifySectionTitle(sectionId, textbookId, chapterId);
+//                break;
+//            case "2":
+//                deleteSection(sectionId);
+//                break;
+//            case "3":
+//                hideSection(sectionId, textbookId, chapterId);
+//                break;
             case "1":
-                modifySectionTitle(sectionId, textbookId, chapterId);
+                handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "2":
-                deleteSection(sectionId);
+                handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "3":
-                hideSection(sectionId, textbookId, chapterId);
+                deleteContentBlock(textbookId,chapterId,sectionId);
                 break;
             case "4":
+
                 handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "5":
                 handleModifyBlock(textbookId, chapterId,sectionId);
                 break;
             case "6":
+
                 return;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -535,10 +549,10 @@ public class TeachingAssistantController {
         System.out.print("Enter Content Block ID: ");
         String blockId = scanner.nextLine();
 
-        System.out.println("1. Modify Content");
-        System.out.println("2. Delete Content Block");
-        System.out.println("3. Hide Content Block");
-        System.out.println("4. Go Back");
+        System.out.println("1. Modify Content\n");
+        System.out.println("2. Delete Content Block\n");
+        System.out.println("3. Hide Content Block\n");
+        System.out.println("4. Go Back\n");
         System.out.print("Enter your choice: ");
 
         String choice = scanner.nextLine();
@@ -547,10 +561,10 @@ public class TeachingAssistantController {
                 modifyContentBlock(blockId, textbookId, chapterId, sectionId);
                 break;
             case "2":
-                deleteContentBlock(blockId);
+                deleteContentBlock(textbookId,chapterId,sectionId);
                 break;
             case "3":
-                hideContentBlock(blockId, textbookId, chapterId, sectionId);
+                hideContentBlock(textbookId, chapterId, sectionId);
                 break;
             case "4":
                 return;
@@ -572,21 +586,27 @@ public class TeachingAssistantController {
         }
     }
 
-    private void deleteContentBlock(String blockId) {
-        if (taService.deleteBlock(blockId, currentTA.getUserId())) {
-            System.out.println("Content block deleted successfully!");
+    private void deleteContentBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.print("Enter Content Block ID that you want to delete: ");
+        String blockId = scanner.nextLine();
+        if (taService.deleteBlock(textbookId, chapterId, sectionId, blockId, currentTA.getUserId())) {
+            System.out.println("Content block and related activities/questions deleted successfully!");
         } else {
             System.out.println("Failed to delete content block.");
         }
     }
 
-    private void hideContentBlock(String blockId, String textbookId, String chapterId, String sectionId) {
+    private void hideContentBlock(String textbookId, String chapterId, String sectionId) {
+        System.out.print("Enter Content Block ID that you want to hide: ");
+        String blockId = scanner.nextLine();
         if (taService.hideBlock(textbookId, chapterId, sectionId, blockId, currentTA.getUserId(), currentTA.getAssignedCourseIds().get(0))) {
             System.out.println("Content block hidden successfully!");
         } else {
             System.out.println("Failed to hide content block.");
         }
     }
+
+
 
 
     private void handleAddActivity(String textbookId, String chapterId, String sectionId, String blockId) {
@@ -597,9 +617,12 @@ public class TeachingAssistantController {
             String activityId = scanner.nextLine();
 
             // Step 2: Display menu options for saving or going back
+
             System.out.println("\n1. Save Activity");
             System.out.println("2. Go Back");
             System.out.println("3. Landing Page");
+
+
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
 

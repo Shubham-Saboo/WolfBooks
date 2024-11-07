@@ -47,6 +47,7 @@ public class EnrollmentDAO {
         return null;
     }
 
+
     // Get list of enrolled students for a course
     public List<UserModel> getEnrolledStudents(String courseId) {
         List<UserModel> students = new ArrayList<>();
@@ -89,6 +90,7 @@ public class EnrollmentDAO {
             e.printStackTrace();
         }
         return pendingStudents;
+
     }
 
     // Retrieve all enrollments for a specific course

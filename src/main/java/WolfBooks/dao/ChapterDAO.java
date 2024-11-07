@@ -101,12 +101,14 @@ public class ChapterDAO {
 
     // Utility method to extract ChapterModel from ResultSet
     private static ChapterModel extractChapterFromResultSet(ResultSet rs) throws SQLException {
+
         return new ChapterModel(
             rs.getString("chapter_id"),
             rs.getString("textbook_id"),
             rs.getString("chapter_title"),
             rs.getBoolean("is_hidden"),
             rs.getString("created_by")
+
         );
     }
 }

@@ -18,7 +18,7 @@ public class LandingPageController {
     // TODO: Add other controllers when implemented
     // private final FacultyController facultyController;
     // private final TAController taController;
-    // private final StudentController studentController;
+    private final StudentController studentController;
 
     public LandingPageController(AdminService adminService,TeachingAssistantService taService ) {
         this.adminService = adminService;
@@ -26,6 +26,7 @@ public class LandingPageController {
         this.scanner = new Scanner(System.in);
         this.adminController = new AdminController(adminService);
         this.taController = new TeachingAssistantController(taService);
+
     }
 
     public void start() {
@@ -46,7 +47,7 @@ public class LandingPageController {
                         handleLogin("teaching_assistant");
                         break;
                     case "4": // Student Login
-                        handleLogin("student");
+                        studentController.start();
                         break;
                     case "5": // Exit
                         System.out.println("Thank you for using WolfBooks. Goodbye!");

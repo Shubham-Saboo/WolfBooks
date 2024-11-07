@@ -87,9 +87,12 @@ public class TeachingAssistantDAO {
 
     public List<UserModel> viewStudentsInCourse(String courseId) throws SQLException {
         List<UserModel> students = new ArrayList<>();
+
         String query = "SELECT u.* FROM Users u JOIN Enrollments e ON u.user_id = e.user_id WHERE e.course_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
+
+
             stmt.setString(1, courseId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -275,6 +278,24 @@ public class TeachingAssistantDAO {
         }
     }
 
+
+
+    public boolean hideActivity(String textbookId, String chapterId, String sectionId, String blockId, String activityId, String taId, String courseId) throws SQLException {
+        if (isTAAssignedToCourse(taId, courseId)) {
+            String query = "UPDATE Activities SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ? AND activity_id = ?";
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, textbookId);
+                stmt.setString(2, chapterId);
+                stmt.setString(3, sectionId);
+                stmt.setString(4, blockId);
+                stmt.setString(5, activityId);
+                return stmt.executeUpdate() > 0;
+            }
+        }
+        return false;
+    }
+
 // ==================== Deleting Content Operations ====================
 public boolean deleteChapter(String chapterId, String taId) throws SQLException {
     if (validateTAOwnership(taId, chapterId, "Chapters")) {
@@ -300,6 +321,7 @@ public boolean deleteSection(String sectionId, String taId) throws SQLException 
     return false;
 }
 
+
 public boolean deleteContentBlock(String blockId, String taId) throws SQLException {
     if (validateTAOwnership(taId, blockId, "Blocks")) {
         String query = "DELETE FROM Blocks WHERE block_id = ?";
@@ -307,12 +329,30 @@ public boolean deleteContentBlock(String blockId, String taId) throws SQLExcepti
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, blockId);
             return stmt.executeUpdate() > 0;
+
+    
         }
     }
-    return false;
-}
-
-// ==================== Validation Helpers ====================
+//public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {
+//    String procedureCall = "CALL DeleteBlockAndActivity(?, ?, ?, ?)";  // Note: lowercase 'call'
+//
+//    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+//         CallableStatement stmt = conn.prepareCall(procedureCall)) {
+//
+//        stmt.setString(1, textbookId);
+//        stmt.setString(2, chapterId);
+//        stmt.setString(3, sectionId);
+//        stmt.setString(4, blockId);
+//
+//        stmt.execute();
+//        return true;
+//    } catch (SQLException e) {
+//        System.err.println("Error executing DeleteBlockAndActivity: " + e.getMessage());
+//        throw e;
+//    }
+//}
+//
+//// ==================== Validation Helpers ====================
 private boolean validateTAOwnership(String taId, String contentId, String tableName) throws SQLException {
     String query = "SELECT created_by FROM " + tableName + " WHERE id = ?";
     try (Connection conn = DatabaseConnection.getInstance().getConnection();
@@ -325,6 +365,7 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
     }
     return false;
 }
+
 
 public List<String> getAssignedTextbooks(String taId) throws SQLException {
     List<String> textbooks = new ArrayList<>();
@@ -340,10 +381,13 @@ public List<String> getAssignedTextbooks(String taId) throws SQLException {
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             textbooks.add(rs.getString("textbook_title"));
+
+
         }
     }
     return textbooks;
 }
+
 
 public List<String> getAssignedTextbooks(String taId, String courseId) throws SQLException {
     List<String> textbooks = new ArrayList<>();
@@ -361,6 +405,7 @@ public List<String> getAssignedTextbooks(String taId, String courseId) throws SQ
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             textbooks.add(rs.getString("textbook_id"));
+
         }
     }
     return textbooks;
@@ -381,6 +426,5 @@ private boolean validateAccess(String userId, String contentId, String table) th
 }
 
 // ==================== Connection Management ====================
-
 
 }

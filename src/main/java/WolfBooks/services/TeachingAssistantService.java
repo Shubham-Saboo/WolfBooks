@@ -205,6 +205,22 @@ public class TeachingAssistantService {
         }
     }
 
+
+    public boolean hideActivity(String textbookId, String chapterId, String sectionId, String blockId, String activityId, String taId, String courseId) {
+        try {
+            validateId(textbookId, "Textbook ID");
+            validateId(chapterId, "Chapter ID");
+            validateId(sectionId, "Section ID");
+            validateId(blockId, "Block ID");
+            validateId(activityId, "Activity ID");
+            validateId(taId, "TA ID");
+            validateId(courseId, "Course ID");
+            return taDAO.hideActivity(textbookId, chapterId, sectionId, blockId, activityId, taId, courseId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to hide activity: " + e.getMessage());
+        }
+    }
+
     // Modify Block
     public boolean modifyBlock(String blockId, String content, String contentType,
                                String taId, String courseId) {
@@ -242,15 +258,19 @@ public class TeachingAssistantService {
     }
 
     // Delete Block
-    public boolean deleteBlock(String blockId, String taId) {
+    public boolean deleteBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) {
         try {
+            validateId(textbookId, "Textbook ID");
+            validateId(chapterId, "Chapter ID");
+            validateId(sectionId, "Section ID");
             validateId(blockId, "Block ID");
             validateId(taId, "TA ID");
-            return taDAO.deleteContentBlock(blockId, taId);
+            return taDAO.deleteContentBlock(textbookId, chapterId, sectionId, blockId, taId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete block: " + e.getMessage());
         }
     }
+
 
     // ==================== Password Management ====================
     public boolean changePassword(String userId, String currentPassword, String newPassword) {

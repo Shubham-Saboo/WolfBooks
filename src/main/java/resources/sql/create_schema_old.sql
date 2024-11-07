@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS Notifications;
 DROP TABLE IF EXISTS Courses;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Textbooks;
+DROP PROCEDURE IF EXISTS DeleteBlockAndActivity;
 
 CREATE TABLE IF NOT EXISTS Textbooks (
     textbook_id VARCHAR(50),
@@ -210,3 +211,6 @@ CREATE TABLE IF NOT EXISTS StudentGrades (
     FOREIGN KEY (student_id) REFERENCES Users(user_id),
     FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
+
+
+
