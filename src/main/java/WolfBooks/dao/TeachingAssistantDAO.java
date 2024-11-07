@@ -127,6 +127,20 @@ public class TeachingAssistantDAO {
         }
         return false;
     }
+    public boolean hideChapterforfaculty(String textbookId, String chapterId, String taId, String courseId) throws SQLException {
+
+            String query = "UPDATE Chapters SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ?";
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, textbookId);
+                stmt.setString(2, chapterId);
+                return stmt.executeUpdate() > 0;
+
+        }catch (SQLException e) {
+                return false;
+            }
+
+    }
 
     public boolean modifyChapter(String chapterId, String newTitle, String taId, String courseId) throws SQLException {
         if (isTAAssignedToCourse(taId, courseId)) {
@@ -298,16 +312,16 @@ public class TeachingAssistantDAO {
 
 // ==================== Deleting Content Operations ====================
 public boolean deleteChapter(String chapterId, String taId) throws SQLException {
-    if (validateTAOwnership(taId, chapterId, "Chapters")) {
+
         String query = "DELETE FROM Chapters WHERE chapter_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, chapterId);
             return stmt.executeUpdate() > 0;
         }
-    }
-    return false;
+
 }
+
 
 public boolean deleteSection(String sectionId, String taId) throws SQLException {
     if (validateTAOwnership(taId, sectionId, "Sections")) {
@@ -430,6 +444,21 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
 }
 
 
+    private boolean validateTAOwnershipsection(String taId, String contentId, String tableName) throws SQLException {
+        String query = "SELECT created_by FROM " + tableName + " WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, contentId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("created_by").equals(taId);
+            }
+        }
+        return false;
+    }
+
+
+
 public List<String> getAssignedTextbooks(String taId) throws SQLException {
     List<String> textbooks = new ArrayList<>();
     String query = "SELECT DISTINCT t.textbook_id, t.textbook_title " +
@@ -473,6 +502,26 @@ public List<String> getAssignedTextbooks(String taId, String courseId) throws SQ
     }
     return textbooks;
 }
+
+
+    public List<String> getAssignedTextbooksforfaculty(String taId, String courseId) throws SQLException {
+        List<String> textbooks = new ArrayList<>();
+        String query = "SELECT t.textbook_id " +
+                "FROM Textbooks t " +
+                "JOIN Courses c ON t.textbook_id = c.textbook_id " +
+                "WHERE c.course_id = ?";
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, courseId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                textbooks.add(rs.getString("textbook_id"));
+
+            }
+        }
+        return textbooks;
+    }
 
 
 
