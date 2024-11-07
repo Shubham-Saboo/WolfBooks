@@ -6,7 +6,7 @@ INSERT INTO Textbooks (textbook_id, textbook_title) VALUES
 
 INSERT INTO Users (user_id, firstname, lastname, email, password, user_role) VALUES
 ('ErPe1024', 'Eric', 'Perrig', 'ez356@example.mail', 'qwdmq', 'student'),
-('Admin1024', 'Rajat', 'Chandak', 'rc@example.mail', '@12345', 'admin'),
+('Admin1024', 'Admin01', 'admin', 'rc@example.mail', '@12345', 'admin'),
 ('AlAr1024', 'Alice', 'Artho', 'aa23@edu.mail', 'omdsws', 'student'),
 ('BoTe1024', 'Bob', 'Temple', 'bt163@template.mail', 'sak+=', 'student'),
 ('LiGa1024', 'Lily', 'Gaddy', 'li123@example.edu', 'cnaos', 'student'),
