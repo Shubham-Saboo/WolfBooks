@@ -4,10 +4,7 @@ import src.main.java.WolfBooks.dao.*;
 import src.main.java.WolfBooks.models.*;
 import src.main.java.WolfBooks.util.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 public class FacultyService {
