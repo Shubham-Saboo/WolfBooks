@@ -139,35 +139,30 @@ CREATE TABLE IF NOT EXISTS Activities (
 );
 
 CREATE TABLE IF NOT EXISTS Questions (
-    textbook_id VARCHAR(50),
-    chapter_id VARCHAR(50),
-    section_id VARCHAR(50),
-    block_id VARCHAR(50),
-    activity_id VARCHAR(50),
-    question_id VARCHAR(50),
-    question VARCHAR(255) NOT NULL,
-    explanation_one VARCHAR(255) NOT NULL,
-    explanation_two VARCHAR(255) NOT NULL,
-    explanation_three VARCHAR(255) NOT NULL,
-    explanation_four VARCHAR(255) NOT NULL,
-    answer_one VARCHAR(255) NOT NULL,
-    answer_two VARCHAR(255) NOT NULL,
-    answer_three VARCHAR(255) NOT NULL,
-    answer_four VARCHAR(255) NOT NULL,
-    answer_correct VARCHAR(1) NOT NULL,
-    PRIMARY KEY (textbook_id, chapter_id, section_id, block_id, activity_id, question_id),
-    INDEX (question_id),
-    INDEX (activity_id),
-    FOREIGN KEY (textbook_id)
-        REFERENCES Textbooks(textbook_id) ON DELETE CASCADE,
-    FOREIGN KEY (textbook_id, chapter_id)
-        REFERENCES Chapters(textbook_id, chapter_id) ON DELETE CASCADE,
-    FOREIGN KEY (textbook_id, chapter_id, section_id)
-        REFERENCES Sections(textbook_id, chapter_id, section_id) ON DELETE CASCADE,
-    FOREIGN KEY (textbook_id, chapter_id, section_id, block_id)
-        REFERENCES Blocks(textbook_id, chapter_id, section_id, block_id) ON DELETE CASCADE,
-    FOREIGN KEY (textbook_id, chapter_id, section_id, block_id, activity_id)
-        REFERENCES Activities(textbook_id, chapter_id, section_id, block_id, activity_id) ON DELETE CASCADE
+                                         textbook_id VARCHAR(50),
+                                         chapter_id VARCHAR(50),
+                                         section_id VARCHAR(50),
+                                         block_id VARCHAR(50),
+                                         activity_id VARCHAR(50),
+                                         question_id VARCHAR(50),
+                                         question VARCHAR(255) NOT NULL,
+                                         explanation_one VARCHAR(255) NOT NULL,
+                                         explanation_two VARCHAR(255) NOT NULL,
+                                         explanation_three VARCHAR(255) NOT NULL,
+                                         explanation_four VARCHAR(255) NOT NULL,
+                                         answer_one VARCHAR(255) NOT NULL,
+                                         answer_two VARCHAR(255) NOT NULL,
+                                         answer_three VARCHAR(255) NOT NULL,
+                                         answer_four VARCHAR(255) NOT NULL,
+                                         answer_correct VARCHAR(1) NOT NULL,
+                                         PRIMARY KEY (textbook_id, chapter_id, section_id, block_id, activity_id, question_id),
+                                         INDEX (question_id),
+                                         INDEX (activity_id),
+                                         FOREIGN KEY (textbook_id) REFERENCES Textbooks(textbook_id) ON DELETE CASCADE,
+                                         FOREIGN KEY (textbook_id, chapter_id) REFERENCES Chapters(textbook_id, chapter_id) ON DELETE CASCADE,
+                                         FOREIGN KEY (textbook_id, chapter_id, section_id) REFERENCES Sections(textbook_id, chapter_id, section_id) ON DELETE CASCADE,
+                                         FOREIGN KEY (textbook_id, chapter_id, section_id, block_id) REFERENCES Blocks(textbook_id, chapter_id, section_id, block_id) ON DELETE CASCADE,
+                                         FOREIGN KEY (textbook_id, chapter_id, section_id, block_id, activity_id) REFERENCES Activities(textbook_id, chapter_id, section_id, block_id, activity_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS StudentActivities (
@@ -179,7 +174,7 @@ CREATE TABLE IF NOT EXISTS StudentActivities (
     block_id VARCHAR(50),
     question_id VARCHAR(50),
     unique_activity_id VARCHAR(50),
-    score INT CHECK (score >= 0) DEFAULT 0,
+    score INT DEFAULT 0,
     sa_timestamp DATETIME NOT NULL,
     PRIMARY KEY (student_id, course_id, textbook_id, chapter_id, section_id, block_id, unique_activity_id, question_id),
     INDEX (student_id),
