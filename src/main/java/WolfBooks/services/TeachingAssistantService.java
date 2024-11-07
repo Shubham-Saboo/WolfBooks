@@ -205,6 +205,22 @@ public class TeachingAssistantService {
         }
     }
 
+
+    public boolean hideActivity(String textbookId, String chapterId, String sectionId, String blockId, String activityId, String taId, String courseId) {
+        try {
+            validateId(textbookId, "Textbook ID");
+            validateId(chapterId, "Chapter ID");
+            validateId(sectionId, "Section ID");
+            validateId(blockId, "Block ID");
+            validateId(activityId, "Activity ID");
+            validateId(taId, "TA ID");
+            validateId(courseId, "Course ID");
+            return taDAO.hideActivity(textbookId, chapterId, sectionId, blockId, activityId, taId, courseId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to hide activity: " + e.getMessage());
+        }
+    }
+
     // Modify Block
     public boolean modifyBlock(String blockId, String content, String contentType,
                                String taId, String courseId) {
