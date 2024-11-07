@@ -147,4 +147,23 @@ public class CourseDAO {
                 rs.getString ("textbook_id")
         );
     }
+// Add this method to CourseDAO
+public List<CourseModel> getCoursesByFaculty(String facultyId) {
+    List<CourseModel> courses = new ArrayList<>();
+    String sql = "SELECT * FROM Courses WHERE faculty_id = ?";
+    
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, facultyId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        while (rs.next()) {
+            courses.add(extractCourseFromResultSet(rs));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return courses;
+}
 }

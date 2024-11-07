@@ -214,10 +214,10 @@ public class TeachingAssistantController {
             System.out.println("\n1. Add Text");
             System.out.println("2. Add Picture");
             System.out.println("3. Add Activity");
-            System.out.println("4. Hide Activity");
-            System.out.println("5. Go Back");
-            System.out.println("6. Landing Page");
-            System.out.print("Enter your choice (1-6): ");
+
+            System.out.println("4. Go Back");
+            System.out.println("5. Landing Page");
+            System.out.print("Enter your choice (1-5): ");
             String choice = scanner.nextLine();
 
             switch (choice) {
@@ -234,13 +234,9 @@ public class TeachingAssistantController {
                     handleAddActivity(textbookId,chapterId, sectionId, blockId);
                     break;
                 case "4":
-                    // Option 3: Redirect to add activity
-                   hideActivity(textbookId,chapterId, sectionId, blockId);
-                    break;
-                case "5":
                     // Option 4: Go back without saving
                     return;
-                case "6":
+                case "5":
                     // Option 5: Return to Admin Landing Page
                     showTAMenu();
                     break;
@@ -305,6 +301,7 @@ public class TeachingAssistantController {
             System.out.println("3. Landing Page");
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
+
 
             switch (choice) {
                 case "1":
@@ -484,9 +481,14 @@ public class TeachingAssistantController {
                 deleteContentBlock(textbookId,chapterId,sectionId);
                 break;
             case "4":
-                hideContentBlock(textbookId,chapterId,sectionId);
+
+                handleAddNewBlock(textbookId, chapterId,sectionId);
                 break;
             case "5":
+                handleModifyBlock(textbookId, chapterId,sectionId);
+                break;
+            case "6":
+
                 return;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -605,22 +607,6 @@ public class TeachingAssistantController {
     }
 
 
-    private void hideActivity(String textbookId, String chapterId, String sectionId, String blockId) {
-        System.out.println("\n=== Hide Activity ===");
-        try {
-            System.out.print("Enter Activity ID that you want to hide: ");
-            String activityId = scanner.nextLine();
-
-            if (taService.hideActivity(textbookId, chapterId, sectionId, blockId, activityId,
-                    currentTA.getUserId(), currentTA.getAssignedCourseIds().get(0))) {
-                System.out.println("Activity hidden successfully!");
-            } else {
-                System.out.println("Failed to hide activity.");
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
 
 
     private void handleAddActivity(String textbookId, String chapterId, String sectionId, String blockId) {
@@ -631,9 +617,12 @@ public class TeachingAssistantController {
             String activityId = scanner.nextLine();
 
             // Step 2: Display menu options for saving or going back
-            System.out.println("\n1. Save Activity\n");
-            System.out.println("2. Go Back\n");
-            System.out.println("3. Landing Page\n");
+
+            System.out.println("\n1. Save Activity");
+            System.out.println("2. Go Back");
+            System.out.println("3. Landing Page");
+
+
             System.out.print("Enter your choice (1-3): ");
             String choice = scanner.nextLine();
 

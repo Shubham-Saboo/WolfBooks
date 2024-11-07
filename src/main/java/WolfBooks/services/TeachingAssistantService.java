@@ -472,4 +472,3 @@ public class TeachingAssistantService {
     // Implement other methods here following similar patterns as above for activities, hiding sections, etc.
 
 }
-

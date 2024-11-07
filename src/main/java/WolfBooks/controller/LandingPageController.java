@@ -26,7 +26,7 @@ public class LandingPageController {
         this.scanner = new Scanner(System.in);
         this.adminController = new AdminController(adminService);
         this.taController = new TeachingAssistantController(taService);
-        studentController = new StudentController();
+
     }
 
     public void start() {

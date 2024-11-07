@@ -87,12 +87,12 @@ public class TeachingAssistantDAO {
 
     public List<UserModel> viewStudentsInCourse(String courseId) throws SQLException {
         List<UserModel> students = new ArrayList<>();
-        String query = "SELECT u.* FROM Users u " +
-                "JOIN Enrollments e ON u.user_id = e.user_id " +
-                "WHERE e.course_id = ? AND e.user_status = 'enrolled'";
 
+        String query = "SELECT u.* FROM Users u JOIN Enrollments e ON u.user_id = e.user_id WHERE e.course_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+
             stmt.setString(1, courseId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -321,65 +321,16 @@ public boolean deleteSection(String sectionId, String taId) throws SQLException 
     return false;
 }
 
-    public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {
-        // First drop the existing procedure
-        String dropProc = "DROP PROCEDURE IF EXISTS DeleteBlockAndActivity";
 
-        // Create the procedure
-        String createProc =
-                "CREATE PROCEDURE DeleteBlockAndActivity(" +
-                        "    IN p_textbook_id VARCHAR(50)," +
-                        "    IN p_chapter_id VARCHAR(50)," +
-                        "    IN p_section_id VARCHAR(50)," +
-                        "    IN p_block_id VARCHAR(50)" +
-                        ")" +
-                        "BEGIN " +
-                        "    DELETE FROM StudentActivities " +
-                        "    WHERE textbook_id = p_textbook_id " +
-                        "    AND chapter_id = p_chapter_id " +
-                        "    AND section_id = p_section_id " +
-                        "    AND block_id = p_block_id; " +
+public boolean deleteContentBlock(String blockId, String taId) throws SQLException {
+    if (validateTAOwnership(taId, blockId, "Blocks")) {
+        String query = "DELETE FROM Blocks WHERE block_id = ?";
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, blockId);
+            return stmt.executeUpdate() > 0;
 
-                        "    DELETE FROM Questions " +
-                        "    WHERE textbook_id = p_textbook_id " +
-                        "    AND chapter_id = p_chapter_id " +
-                        "    AND section_id = p_section_id " +
-                        "    AND block_id = p_block_id; " +
-
-                        "    DELETE FROM Activities " +
-                        "    WHERE textbook_id = p_textbook_id " +
-                        "    AND chapter_id = p_chapter_id " +
-                        "    AND section_id = p_section_id " +
-                        "    AND block_id = p_block_id; " +
-
-                        "    DELETE FROM Blocks " +
-                        "    WHERE textbook_id = p_textbook_id " +
-                        "    AND chapter_id = p_chapter_id " +
-                        "    AND section_id = p_section_id " +
-                        "    AND block_id = p_block_id; " +
-                        "END";
-
-        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
-            // Drop existing procedure
-            try (Statement stmt = conn.createStatement()) {
-                stmt.execute(dropProc);
-                stmt.execute(createProc);
-            }
-
-            // Call the procedure
-            String callProc = "{call DeleteBlockAndActivity(?, ?, ?, ?)}";
-            try (CallableStatement cstmt = conn.prepareCall(callProc)) {
-                cstmt.setString(1, textbookId);
-                cstmt.setString(2, chapterId);
-                cstmt.setString(3, sectionId);
-                cstmt.setString(4, blockId);
-
-                cstmt.execute();
-                return true;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error in deleteContentBlock: " + e.getMessage());
-            throw e;
+    
         }
     }
 //public boolean deleteContentBlock(String textbookId, String chapterId, String sectionId, String blockId, String taId) throws SQLException {
@@ -415,52 +366,50 @@ private boolean validateTAOwnership(String taId, String contentId, String tableN
     return false;
 }
 
-    public List<String> getAssignedTextbooks(String taId) throws SQLException {
-        List<String> textbooks = new ArrayList<>();
-        String query = """
-        SELECT DISTINCT t.textbook_id, t.textbook_title
-        FROM Textbooks t
-        JOIN Courses c ON t.textbook_id = c.textbook_id
-        JOIN TeachingAssistants ta ON c.course_id = ta.course_id
-        WHERE ta.user_id = ?;
-    """;
 
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, taId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                textbooks.add(rs.getString("textbook_title")); // Optionally, could also add the textbook title if needed elsewhere
-            }
+public List<String> getAssignedTextbooks(String taId) throws SQLException {
+    List<String> textbooks = new ArrayList<>();
+    String query = "SELECT DISTINCT t.textbook_id, t.textbook_title " +
+                  "FROM Textbooks t " +
+                  "JOIN Courses c ON t.textbook_id = c.textbook_id " +
+                  "JOIN TeachingAssistants ta ON c.course_id = ta.course_id " +
+                  "WHERE ta.user_id = ?";
+
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, taId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            textbooks.add(rs.getString("textbook_title"));
+
+
         }
-        return textbooks;
     }
+    return textbooks;
+}
 
-    public List<String> getAssignedTextbooks(String taId, String courseId) throws SQLException {
-        List<String> textbooks = new ArrayList<>();
-        String query = """
-        SELECT t.textbook_id
-        FROM Textbooks t
-        JOIN Courses c ON t.textbook_id = c.textbook_id
-        WHERE c.course_id = ? AND c.course_id IN (
-            SELECT course_id FROM TeachingAssistants WHERE user_id = ?
-        );
-    """;
 
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, courseId);
-            stmt.setString(2, taId);
-            ResultSet rs = stmt.executeQuery();
+public List<String> getAssignedTextbooks(String taId, String courseId) throws SQLException {
+    List<String> textbooks = new ArrayList<>();
+    String query = "SELECT t.textbook_id " +
+                  "FROM Textbooks t " +
+                  "JOIN Courses c ON t.textbook_id = c.textbook_id " +
+                  "WHERE c.course_id = ? AND c.course_id IN (" +
+                  "    SELECT course_id FROM TeachingAssistants WHERE user_id = ?" +
+                  ")";
 
-            while (rs.next()) {
-                textbooks.add(rs.getString("textbook_id"));
-            }
+    try (Connection conn = DatabaseConnection.getInstance().getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, courseId);
+        stmt.setString(2, taId);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            textbooks.add(rs.getString("textbook_id"));
+
         }
-        System.out.println("Query result: " + textbooks.get(0));
-        return textbooks;
     }
-
+    return textbooks;
+}
 
 
 
@@ -477,6 +426,5 @@ private boolean validateAccess(String userId, String contentId, String table) th
 }
 
 // ==================== Connection Management ====================
-
 
 }
