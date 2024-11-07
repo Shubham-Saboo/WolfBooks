@@ -230,8 +230,6 @@ public class StudentController {
             for (QuestionModel question : questions) {
                 questionNumber += 1;
                 System.out.println("(Q" + questionNumber + ") " + question.getQuestionText() + "\n");
-//                System.out.println(question.getQuestionText());
-//                System.out.println("Question choices:");
                 System.out.println("1. " + question.getAnswerOne());
                 System.out.println("2. " + question.getAnswerTwo());
                 System.out.println("3. " + question.getAnswerThree());
@@ -270,6 +268,7 @@ public class StudentController {
                     System.out.println("Invalid option!");
                     option = scanner.nextInt();
                 }
+                System.out.println();
                 if (option == 2) return;
             }
 //            studentService.addStudentActivity(new StudentActivityModel(student.getUserId(), course.getCourseId(), block.getTextbookId(), block.getChapterId(),
