@@ -278,6 +278,24 @@ public class TeachingAssistantDAO {
         }
     }
 
+
+
+    public boolean hideActivity(String textbookId, String chapterId, String sectionId, String blockId, String activityId, String taId, String courseId) throws SQLException {
+        if (isTAAssignedToCourse(taId, courseId)) {
+            String query = "UPDATE Activities SET is_hidden = TRUE WHERE textbook_id = ? AND chapter_id = ? AND section_id = ? AND block_id = ? AND activity_id = ?";
+            try (Connection conn = DatabaseConnection.getInstance().getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, textbookId);
+                stmt.setString(2, chapterId);
+                stmt.setString(3, sectionId);
+                stmt.setString(4, blockId);
+                stmt.setString(5, activityId);
+                return stmt.executeUpdate() > 0;
+            }
+        }
+        return false;
+    }
+
 // ==================== Deleting Content Operations ====================
 public boolean deleteChapter(String chapterId, String taId) throws SQLException {
     if (validateTAOwnership(taId, chapterId, "Chapters")) {
