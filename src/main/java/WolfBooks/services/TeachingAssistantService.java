@@ -235,7 +235,7 @@ public class TeachingAssistantService {
         try {
             validateId(chapterId, "Chapter ID");
             validateId(taId, "TA ID");
-            return taDAO.deleteChapter(chapterId, taId);
+            return taDAO.deleteChapter(chapterId, taId, null, null);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete chapter: " + e.getMessage());
         }
@@ -246,7 +246,7 @@ public class TeachingAssistantService {
         try {
             validateId(sectionId, "Section ID");
             validateId(taId, "TA ID");
-            return taDAO.deleteSection(sectionId, taId);
+            return taDAO.deleteSection(sectionId, taId, null, null);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete section: " + e.getMessage());
         }

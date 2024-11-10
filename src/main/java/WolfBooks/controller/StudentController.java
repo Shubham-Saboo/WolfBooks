@@ -35,11 +35,12 @@ public class StudentController {
             System.out.println("3. Go back");
             System.out.print("Choose an option (1-3): ");
             try {
-                switch (this.scanner.nextInt()) {
-                    case 1:
+                String option = this.scanner.next();
+                switch (option) {
+                    case "1":
                         handleEnrollment();
                         break;
-                    case 2:
+                    case "2":
                         if (signInStudent()) {
                             populateCourses();
                             System.out.println("\nWelcome back " + student.getFirstName() + "!");
@@ -48,7 +49,7 @@ public class StudentController {
                             System.out.println("Invalid credentials!");
                         }
                         break;
-                    case 3:
+                    case "3":
                         return;
                     default:
                         System.out.println("Invalid option!");
@@ -68,24 +69,28 @@ public class StudentController {
             System.out.println("3. View notifications");
             System.out.println("4. Logout");
             System.out.print("Choose an option (1-4): ");
-            int option = this.scanner.nextInt();
+            String option = this.scanner.next();
             switch (option) {
-                case 1:
-                    System.out.print("Enter in the course number: ");
-                    int courseNumber = scanner.nextInt();
-                    System.out.print("Enter in the chapter id: ");
-                    int chapterNumber = scanner.nextInt();
-                    System.out.print("Enter in the section id: ");
-                    int sectionNumber = scanner.nextInt();
-                    viewSection(courseNumber, chapterNumber, sectionNumber);
+                case "1":
+                    try {
+                        System.out.print("Enter in the course number: ");
+                        int courseNumber = scanner.nextInt();
+                        System.out.print("Enter in the chapter id: ");
+                        int chapterNumber = scanner.nextInt();
+                        System.out.print("Enter in the section id: ");
+                        int sectionNumber = scanner.nextInt();
+                        viewSection(courseNumber, chapterNumber, sectionNumber);
+                    } catch (Exception e) {
+                        System.out.println("Invalid input!");
+                    }
                     break;
-                case 2:
+                case "2":
                     viewParticipationPoints();
                     break;
-                case 3:
+                case "3":
                     viewNotifications();
                     break;
-                case 4:
+                case "4":
                     return;
                 default:
                     System.out.println("Invalid option!");
@@ -108,10 +113,10 @@ public class StudentController {
         }
         System.out.println("1. Go back");
         System.out.print("Choose an option (1): ");
-        int option = this.scanner.nextInt();
-        while (option != 1) {
+        String option = this.scanner.next();
+        while (!"1".equals(option)) {
             System.out.print("Choose an option (1): ");
-            option = this.scanner.nextInt();
+            option = this.scanner.next();
         }
     }
 
@@ -138,14 +143,14 @@ public class StudentController {
             System.out.println("1. View block");
             System.out.println("2. Go back");
             System.out.print("Choose an option (1-2): ");
-            int option = this.scanner.nextInt();
+            String option = this.scanner.next();
             switch (option) {
-                case 1:
+                case "1":
                     if (viewBlock(course, blocks) == 1) {
                         return;
                     };
                     break;
-                case 2:
+                case "2":
                     return;
                 default:
                     System.out.println("Invalid option!");
@@ -167,14 +172,14 @@ public class StudentController {
             System.out.println("1. Next/Submit");
             System.out.println("2. Go back");
             System.out.print("Choose an option (1-2): ");
-            int option = this.scanner.nextInt();
+            String option = this.scanner.next();
             switch (option) {
-                case 1:
+                case "`":
                     block = blocks.get(blockId);
                     printBlock(course, block);
                     blockId++;
                     break;
-                case 2:
+                case "2":
                     return 1;
                 default:
                     System.out.println("Invalid option!");
@@ -267,7 +272,12 @@ public class StudentController {
                 int answer = 0;
                 int score = 1;
                 while (true) {
-                    answer = this.scanner.nextInt();
+                    try {
+                        answer = this.scanner.nextInt();
+                    } catch (Exception e) {
+                        System.out.println("Invalid input!");
+                        continue;
+                    }
                     if (answer < 1 || answer > 4) {
                         System.out.println("Invalid selection.");
                         continue;
@@ -292,16 +302,14 @@ public class StudentController {
 
                 System.out.println("1. Next question");
                 System.out.println("2. Leave activity");
-                int option = scanner.nextInt();
-                while (option < 1 || option > 2) {
+                String option = scanner.next();
+                while (!"1".equals(option) && !"2".equals(option)) {
                     System.out.println("Invalid option!");
-                    option = scanner.nextInt();
+                    option = scanner.next();
                 }
                 System.out.println();
-                if (option == 2) return;
+                if ("2".equals(option)) return;
             }
-//            studentService.addStudentActivity(new StudentActivityModel(student.getUserId(), course.getCourseId(), block.getTextbookId(), block.getChapterId(),
-//                        block.getSectionId(), block.getBlockId(), question.getQuestionId(), block.getContent(), score, sqlTimestamp));
         }
     }
 
@@ -314,11 +322,11 @@ public class StudentController {
             System.out.println("Score: " + studentActivity.getScore());
             System.out.println();
         }
-        int option = 0;
-        while (option != 1) {
+        String option = "";
+        while (!"1".equals(option)) {
             System.out.println("1. Go back");
             System.out.print("Choose an option (1): ");
-            option = this.scanner.nextInt();
+            option = this.scanner.next();
         }
     }
 
